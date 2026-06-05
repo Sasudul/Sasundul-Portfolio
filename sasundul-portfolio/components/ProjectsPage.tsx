@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowLeft, ArrowUpRight, X } from 'lucide-react';
 import React, { useRef, useState } from 'react';
+import ProjectModal from './ProjectModal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,7 +22,7 @@ interface ProjectsPageProps {
 
 export default function ProjectsPage({ projects, onBack }: ProjectsPageProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   useGSAP(() => {
     window.scrollTo(0, 0);
@@ -85,9 +86,9 @@ export default function ProjectsPage({ projects, onBack }: ProjectsPageProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-24 items-start">
           {projects.map((p) => (
             <div key={p.id} className="proj-grid-item group h-full flex flex-col">
-              {/* Click image to expand */}
+              {/* Click to expand case study */}
               <div 
-                onClick={() => setSelectedImage(p.image)}
+                onClick={() => setSelectedProject(p)}
                 className="proj-img-wrap overflow-hidden rounded-3xl aspect-[4/3] bg-[#141414] mb-8 relative border border-white/10 shadow-xl hover:shadow-[#a890ff]/10 hover:border-[#a890ff]/30 transition-all duration-500 cursor-pointer flex items-center justify-center p-4 group-hover:bg-[#1a1a1a]"
               >
                 {/* Image is styled to cover nicely but respect bounds */}
@@ -121,25 +122,9 @@ export default function ProjectsPage({ projects, onBack }: ProjectsPageProps) {
 
       </div>
 
-      {/* Lightbox Popout Modal */}
-      {selectedImage && (
-        <div 
-          className="fixed inset-0 z-[100] bg-black/98 flex items-center justify-center p-4 backdrop-blur-md cursor-auto"
-          onClick={() => setSelectedImage(null)}
-        >
-          <button 
-            onClick={(e) => { e.stopPropagation(); setSelectedImage(null); }}
-            className="absolute top-8 right-8 text-white hover:text-[#a890ff] p-3 bg-white/10 hover:bg-white/20 rounded-full transition-all hover:rotate-90 z-10 cursor-pointer shadow-lg"
-          >
-            <X size={28} />
-          </button>
-          <div 
-            className="relative max-w-6xl max-h-[90vh] overflow-hidden rounded-2xl border border-white/10 shadow-[0_0_80px_rgba(168,144,255,0.25)] bg-[#111]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img src={selectedImage} alt="Expanded Project View" className="max-w-full max-h-[90vh] object-contain block mx-auto" />
-          </div>
-        </div>
+      {/* Premium Case Study Modal */}
+      {selectedProject && (
+        <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
       )}
     </div>
   );
