@@ -6,251 +6,15 @@ const PROFILE_IMAGE_URL = "https://avatars.githubusercontent.com/u/158804448?s=4
 
 const TECH_BADGES = ['React.js', 'Spring Boot', 'Next.js', 'Tailwind CSS', 'Figma'];
 
-// 3D-looking floating shapes with gradients + depth
+// 6 image shapes — positioned: shape1 top-left → shape6 bottom-right
 const FLOATING_SHAPES = [
-  { 
-    finalX: -320, finalY: -200,  // top-left
-    size: 60, shape: 'diamond', delay: 0,
-    colors: ['#5BB5FF', '#2A7FD4', '#1A5FA0'],
-  },
-  { 
-    finalX: 300, finalY: -180,  // top-right
-    size: 50, shape: 'arrow3d', delay: 0.08,
-    colors: ['#C0C0C0', '#808080', '#505050'],
-  },
-  { 
-    finalX: -380, finalY: 20,   // mid-left
-    size: 65, shape: 'torus', delay: 0.16,
-    colors: ['#FFD700', '#C4A55A', '#8B7340'],
-  },
-  { 
-    finalX: -280, finalY: 180,  // bottom-left
-    size: 45, shape: 'cross3d', delay: 0.24,
-    colors: ['#B0B0B0', '#808080', '#505050'],
-  },
-  { 
-    finalX: 350, finalY: 50,    // mid-right
-    size: 55, shape: 'sphere', delay: 0.32,
-    colors: ['#A0A0FF', '#6060C0', '#303080'],
-  },
-  { 
-    finalX: 280, finalY: 200,   // bottom-right  
-    size: 55, shape: 'gem3d', delay: 0.40,
-    colors: ['#5AE88A', '#3DAF50', '#2A7A38'],
-  },
-  {
-    finalX: -150, finalY: -250, // upper mid-left
-    size: 40, shape: 'cube', delay: 0.48,
-    colors: ['#FF8080', '#CC4040', '#802020'],
-  },
-  {
-    finalX: 150, finalY: -240,  // upper mid-right
-    size: 48, shape: 'pyramid', delay: 0.56,
-    colors: ['#FFB060', '#D08030', '#905020'],
-  },
-  {
-    finalX: -50, finalY: 260,   // bottom center-left
-    size: 42, shape: 'octahedron', delay: 0.64,
-    colors: ['#80D0FF', '#4090C0', '#206080'],
-  },
-  {
-    finalX: 80, finalY: 240,    // bottom center-right
-    size: 50, shape: 'ring', delay: 0.72,
-    colors: ['#D080FF', '#9040C0', '#602080'],
-  },
+  { src: '/shapes/shape1.png', finalX: -350, finalY: -220, size: 140, delay: 0 },
+  { src: '/shapes/shape2.png', finalX: 320, finalY: -200, size: 120, delay: 0.08 },
+  { src: '/shapes/Shape3.png', finalX: -380, finalY: 40, size: 110, delay: 0.16 },
+  { src: '/shapes/shape4.png', finalX: 360, finalY: 50, size: 120, delay: 0.24 },
+  { src: '/shapes/shape5.png', finalX: -300, finalY: 220, size: 110, delay: 0.32 },
+  { src: '/shapes/shape6.png', finalX: 300, finalY: 230, size: 140, delay: 0.40 },
 ];
-
-// 3D SVG shapes with gradients for depth illusion
-function FloatingShape3D({ shape, colors, size }: { shape: string; colors: string[]; size: number }) {
-  const id = `grad-${shape}-${colors[0].replace('#', '')}`;
-  
-  if (shape === 'diamond') return (
-    <svg viewBox="0 0 60 60" fill="none" width={size} height={size} style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.4))' }}>
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor={colors[0]} />
-          <stop offset="50%" stopColor={colors[1]} />
-          <stop offset="100%" stopColor={colors[2]} />
-        </linearGradient>
-      </defs>
-      {/* Back face */}
-      <polygon points="30,4 56,30 30,56 4,30" fill={colors[2]} opacity="0.5" />
-      {/* Front face with gradient */}
-      <polygon points="30,8 50,30 30,52 10,30" fill={`url(#${id})`} />
-      {/* Highlight edge */}
-      <polygon points="30,8 50,30 30,30" fill="white" opacity="0.15" />
-      {/* Specular */}
-      <ellipse cx="25" cy="22" rx="6" ry="4" fill="white" opacity="0.2" transform="rotate(-15 25 22)" />
-    </svg>
-  );
-
-  if (shape === 'arrow3d') return (
-    <svg viewBox="0 0 50 50" fill="none" width={size} height={size} style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))' }}>
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor={colors[0]} />
-          <stop offset="100%" stopColor={colors[2]} />
-        </linearGradient>
-      </defs>
-      {/* 3D arrow body */}
-      <polygon points="10,40 40,10 40,22 28,22 28,40" fill={`url(#${id})`} />
-      <polygon points="40,10 40,22 28,22" fill="white" opacity="0.2" />
-      {/* Shadow face */}
-      <polygon points="10,40 12,42 30,42 28,40" fill={colors[2]} opacity="0.6" />
-    </svg>
-  );
-
-  if (shape === 'torus') return (
-    <svg viewBox="0 0 60 60" fill="none" width={size} height={size} style={{ filter: 'drop-shadow(0 4px 14px rgba(0,0,0,0.35))' }}>
-      <defs>
-        <radialGradient id={id} cx="40%" cy="35%">
-          <stop offset="0%" stopColor={colors[0]} />
-          <stop offset="60%" stopColor={colors[1]} />
-          <stop offset="100%" stopColor={colors[2]} />
-        </radialGradient>
-      </defs>
-      {/* Outer ring */}
-      <circle cx="30" cy="30" r="25" fill={`url(#${id})`} />
-      {/* Inner hole - use bg-matching color */}
-      <circle cx="30" cy="30" r="12" fill="var(--bg)" />
-      {/* Specular highlight */}
-      <ellipse cx="22" cy="22" rx="8" ry="5" fill="white" opacity="0.2" transform="rotate(-25 22 22)" />
-      {/* Inner shadow */}
-      <circle cx="30" cy="30" r="12" fill="none" stroke={colors[2]} strokeWidth="2" opacity="0.3" />
-    </svg>
-  );
-
-  if (shape === 'cross3d') return (
-    <svg viewBox="0 0 40 40" fill="none" width={size} height={size} style={{ filter: 'drop-shadow(0 3px 10px rgba(0,0,0,0.3))' }}>
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="0.5" y2="1">
-          <stop offset="0%" stopColor={colors[0]} />
-          <stop offset="100%" stopColor={colors[1]} />
-        </linearGradient>
-      </defs>
-      {/* Vertical bar */}
-      <rect x="14" y="2" width="12" height="36" rx="3" fill={`url(#${id})`} />
-      {/* Horizontal bar */}
-      <rect x="2" y="14" width="36" height="12" rx="3" fill={`url(#${id})`} />
-      {/* Highlights */}
-      <rect x="14" y="2" width="5" height="36" rx="3" fill="white" opacity="0.12" />
-      <rect x="2" y="14" width="36" height="5" rx="3" fill="white" opacity="0.08" />
-    </svg>
-  );
-
-  if (shape === 'sphere') return (
-    <svg viewBox="0 0 50 50" fill="none" width={size} height={size} style={{ filter: 'drop-shadow(0 5px 15px rgba(0,0,0,0.4))' }}>
-      <defs>
-        <radialGradient id={id} cx="35%" cy="30%" r="65%">
-          <stop offset="0%" stopColor={colors[0]} />
-          <stop offset="50%" stopColor={colors[1]} />
-          <stop offset="100%" stopColor={colors[2]} />
-        </radialGradient>
-      </defs>
-      <circle cx="25" cy="25" r="22" fill={`url(#${id})`} />
-      {/* Specular highlight */}
-      <ellipse cx="18" cy="17" rx="7" ry="5" fill="white" opacity="0.3" transform="rotate(-20 18 17)" />
-      {/* Rim light */}
-      <path d="M 8 35 A 22 22 0 0 0 42 35" fill="none" stroke="white" strokeWidth="1" opacity="0.1" />
-    </svg>
-  );
-
-  if (shape === 'gem3d') return (
-    <svg viewBox="0 0 50 55" fill="none" width={size} height={size} style={{ filter: 'drop-shadow(0 5px 14px rgba(0,0,0,0.35))' }}>
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="0.5" y2="1">
-          <stop offset="0%" stopColor={colors[0]} />
-          <stop offset="50%" stopColor={colors[1]} />
-          <stop offset="100%" stopColor={colors[2]} />
-        </linearGradient>
-        <linearGradient id={`${id}-face`} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor={colors[0]} stopOpacity="0.6" />
-          <stop offset="100%" stopColor={colors[1]} />
-        </linearGradient>
-      </defs>
-      {/* Top crown */}
-      <polygon points="25,2 45,18 5,18" fill={colors[0]} />
-      <polygon points="25,2 45,18 25,18" fill="white" opacity="0.15" />
-      {/* Bottom pavilion */}
-      <polygon points="5,18 45,18 25,52" fill={`url(#${id})`} />
-      {/* Left face */}
-      <polygon points="5,18 25,52 25,18" fill={colors[2]} opacity="0.4" />
-      {/* Center highlight line */}
-      <line x1="25" y1="2" x2="25" y2="52" stroke="white" strokeWidth="0.5" opacity="0.2" />
-    </svg>
-  );
-
-  if (shape === 'cube') return (
-    <svg viewBox="0 0 50 50" fill="none" width={size} height={size} style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.35))' }}>
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor={colors[0]} />
-          <stop offset="100%" stopColor={colors[1]} />
-        </linearGradient>
-      </defs>
-      {/* Top face */}
-      <polygon points="25,5 45,15 25,25 5,15" fill={colors[0]} />
-      <polygon points="25,5 45,15 25,25 5,15" fill="white" opacity="0.15" />
-      {/* Right face */}
-      <polygon points="45,15 45,35 25,45 25,25" fill={`url(#${id})`} />
-      {/* Left face (darker) */}
-      <polygon points="5,15 25,25 25,45 5,35" fill={colors[2]} />
-    </svg>
-  );
-
-  if (shape === 'pyramid') return (
-    <svg viewBox="0 0 50 55" fill="none" width={size} height={size} style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.35))' }}>
-      <defs>
-        <linearGradient id={id} x1="0.3" y1="0" x2="0.7" y2="1">
-          <stop offset="0%" stopColor={colors[0]} />
-          <stop offset="100%" stopColor={colors[1]} />
-        </linearGradient>
-      </defs>
-      {/* Front left face */}
-      <polygon points="25,3 5,45 25,50" fill={`url(#${id})`} />
-      {/* Front right face (lighter) */}
-      <polygon points="25,3 45,45 25,50" fill={colors[0]} opacity="0.8" />
-      <polygon points="25,3 45,45 25,50" fill="white" opacity="0.1" />
-      {/* Base */}
-      <polygon points="5,45 45,45 25,50" fill={colors[2]} opacity="0.6" />
-    </svg>
-  );
-
-  if (shape === 'octahedron') return (
-    <svg viewBox="0 0 50 50" fill="none" width={size} height={size} style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))' }}>
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="0.5" y2="1">
-          <stop offset="0%" stopColor={colors[0]} />
-          <stop offset="100%" stopColor={colors[2]} />
-        </linearGradient>
-      </defs>
-      {/* Top faces */}
-      <polygon points="25,3 45,25 25,25" fill={colors[0]} />
-      <polygon points="25,3 5,25 25,25" fill={`url(#${id})`} />
-      {/* Bottom faces */}
-      <polygon points="25,47 45,25 25,25" fill={colors[1]} opacity="0.8" />
-      <polygon points="25,47 5,25 25,25" fill={colors[2]} opacity="0.9" />
-      {/* Highlight */}
-      <polygon points="25,3 45,25 25,25" fill="white" opacity="0.12" />
-    </svg>
-  );
-
-  // ring
-  return (
-    <svg viewBox="0 0 50 50" fill="none" width={size} height={size} style={{ filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))' }}>
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor={colors[0]} />
-          <stop offset="100%" stopColor={colors[2]} />
-        </linearGradient>
-      </defs>
-      {/* 3D ring with perspective */}
-      <ellipse cx="25" cy="25" rx="22" ry="10" fill="none" stroke={`url(#${id})`} strokeWidth="5" />
-      {/* Top arc highlight */}
-      <path d="M 5 25 A 22 10 0 0 1 45 25" fill="none" stroke="white" strokeWidth="1.5" opacity="0.2" />
-    </svg>
-  );
-}
 
 // Barcode generator
 function Barcode() {
@@ -267,6 +31,7 @@ export default function HeroID() {
   const sectionRef = useRef<HTMLElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
   const shapesReleasedRef = useRef(false);
+  const floatingTweensRef = useRef<gsap.core.Tween[]>([]);
 
   useGSAP(() => {
     // Card entrance
@@ -302,34 +67,71 @@ export default function HeroID() {
     if (shapesReleasedRef.current) return;
     shapesReleasedRef.current = true;
 
+    // Kill any retract tweens that might be running
+    floatingTweensRef.current.forEach(t => t.kill());
+    floatingTweensRef.current = [];
+
     const shapes = gsap.utils.toArray<HTMLElement>('.hero-float-icon');
 
     shapes.forEach((el, i) => {
       const data = FLOATING_SHAPES[i];
       if (!data) return;
 
+      // Random offset so they don't all go to the exact same spot
+      const randomOffsetX = gsap.utils.random(-40, 40);
+      const randomOffsetY = gsap.utils.random(-30, 30);
+
       // Burst out from center with stagger
       gsap.to(el, {
-        x: data.finalX,
-        y: data.finalY,
+        x: data.finalX + randomOffsetX,
+        y: data.finalY + randomOffsetY,
         scale: 1,
         opacity: 1,
-        rotation: gsap.utils.random(-15, 15),
-        duration: 1.4,
+        rotation: gsap.utils.random(-25, 25),
+        duration: 1.2,
         delay: data.delay,
-        ease: 'back.out(1.4)',
+        ease: 'back.out(1.2)',
         onComplete: () => {
-          // Start continuous floating motion after arriving
-          gsap.to(el, {
-            x: `+=${gsap.utils.random(-60, 60)}`,
-            y: `+=${gsap.utils.random(-40, 40)}`,
-            rotation: `+=${gsap.utils.random(-20, 20)}`,
+          // Start continuous bouncing / floating motion
+          const floatX = gsap.to(el, {
+            x: `+=${gsap.utils.random(-80, 80)}`,
+            y: `+=${gsap.utils.random(-60, 60)}`,
+            rotation: `+=${gsap.utils.random(-30, 30)}`,
             duration: gsap.utils.random(3, 5),
             repeat: -1,
             yoyo: true,
             ease: 'sine.inOut',
           });
+          floatingTweensRef.current.push(floatX);
         }
+      });
+    });
+  }, []);
+
+  const retractShapes = useCallback(() => {
+    if (!shapesReleasedRef.current) return;
+    shapesReleasedRef.current = false;
+
+    // Kill all floating tweens
+    floatingTweensRef.current.forEach(t => t.kill());
+    floatingTweensRef.current = [];
+
+    const shapes = gsap.utils.toArray<HTMLElement>('.hero-float-icon');
+
+    shapes.forEach((el, i) => {
+      const data = FLOATING_SHAPES[i];
+      if (!data) return;
+
+      // Smoothly retract back to center (behind the card)
+      gsap.to(el, {
+        x: 0,
+        y: 0,
+        scale: 0,
+        opacity: 0,
+        rotation: 0,
+        duration: 0.8,
+        delay: i * 0.04,
+        ease: 'power3.in',
       });
     });
   }, []);
@@ -360,6 +162,9 @@ export default function HeroID() {
       duration: 1.5,
       ease: 'elastic.out(1, 0.5)',
     });
+
+    // Retract shapes when cursor leaves the hero section
+    retractShapes();
   };
 
   return (
@@ -370,7 +175,7 @@ export default function HeroID() {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Floating 3D shapes — positioned at center, hidden until card hover */}
+      {/* Floating image shapes — positioned at center, hidden until card hover */}
       {FLOATING_SHAPES.map((shape, i) => (
         <div
           key={i}
@@ -384,7 +189,18 @@ export default function HeroID() {
             willChange: 'transform, opacity',
           }}
         >
-          <FloatingShape3D colors={shape.colors} shape={shape.shape} size={shape.size} />
+          <img
+            src={shape.src}
+            alt=""
+            width={shape.size}
+            height={shape.size}
+            style={{
+              width: shape.size,
+              height: shape.size,
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.3))',
+            }}
+          />
         </div>
       ))}
 
@@ -442,4 +258,3 @@ export default function HeroID() {
     </section>
   );
 }
-

@@ -96,11 +96,12 @@ export default function App() {
 
   // Check if preloader needs to play
   useEffect(() => {
-    const played = sessionStorage.getItem('preloaderPlayed');
-    if (!played) {
+    // Force preloader to always play for now so you can see the new animation
+    // const played = sessionStorage.getItem('preloaderPlayed');
+    // if (!played) {
       setShowPreloader(true);
       setPreloaderDone(false);
-    }
+    // }
   }, []);
 
   // Theme persistence
@@ -120,6 +121,7 @@ export default function App() {
   };
 
   const handlePreloaderComplete = () => {
+    sessionStorage.setItem('preloaderPlayed', 'true');
     setPreloaderDone(true);
     // Small delay before removing preloader from DOM
     setTimeout(() => setShowPreloader(false), 100);

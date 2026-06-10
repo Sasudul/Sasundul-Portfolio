@@ -1,133 +1,173 @@
+import React, { useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { useRef } from 'react';
+import './Preloader.css';
 
-interface PreloaderProps {
-  onComplete: () => void;
-}
+const IMAGES = [
+  '/Art-Gallery-01.jpeg',
+  '/Lumina-1.jpeg',
+  '/NexMart -1.png',
+  '/E-channeling-System-1.jpeg',
+  '/Vap-Construction-1.jpeg',
+];
 
-export default function Preloader({ onComplete }: PreloaderProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
+const NAME = "CODE BY SASUNDUL®";
+
+export default function Preloader({ onComplete }: { onComplete: () => void }) {
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [isComplete, setIsComplete] = useState(false);
+
+  // Render the exact same content twice. The CSS clip-path on the parent halves
+  // will slice the content perfectly down the middle.
+  const renderContent = (isTop: boolean) => (
+    <div className="preloader-content">
+      {/* Phase 1 & 2: Flash Images */}
+      <div className={`preloader-images preloader-images-${isTop ? 'top' : 'bottom'}`}>
+        {IMAGES.map((src, i) => (
+          <img key={i} src={src} className="preloader-img" alt="" />
+        ))}
+      </div>
+
+      {/* Phase 3: Name Reveal */}
+      <div className={`preloader-name-container preloader-name-${isTop ? 'top' : 'bottom'}`}>
+        {NAME.split('').map((char, i) => (
+          <span key={i} className="preloader-char-wrap">
+            <span className={`preloader-char preloader-char-anim ${char === '®' ? 'preloader-char-reg' : ''}`}>
+              {char === ' ' ? '\u00A0' : char}
+            </span>
+          </span>
+        ))}
+      </div>
+
+      {/* Phase 1 & 2: Counter */}
+      <div className={`preloader-counter preloader-counter-${isTop ? 'top' : 'bottom'}`}>
+        0
+      </div>
+    </div>
+  );
 
   useGSAP(() => {
-    document.body.style.overflow = 'hidden';
+    if (!wrapperRef.current) return;
 
     const tl = gsap.timeline({
       onComplete: () => {
-        document.body.style.overflow = '';
-        sessionStorage.setItem('preloaderPlayed', 'true');
+        setIsComplete(true);
         onComplete();
       }
     });
 
-    // Rolling counter animation
-    tl.to('.preloader__digit--1', {
-      y: '-50%',
-      duration: 1.5,
-      ease: 'power2.inOut',
-    })
-    .to('.preloader__digit--2', {
-      y: '-90.909%', // 10 out of 11 positions  
-      duration: 2,
-      ease: 'power2.inOut',
-    }, 0)
-    .to('.preloader__digit--3', {
-      y: '-95.238%', // 20 out of 21 positions
-      duration: 2.5,
-      ease: 'power2.inOut',
-    }, 0)
+    const topImages = gsap.utils.toArray<HTMLElement>('.preloader-images-top .preloader-img');
+    const bottomImages = gsap.utils.toArray<HTMLElement>('.preloader-images-bottom .preloader-img');
+    const topCounter = wrapperRef.current.querySelector('.preloader-counter-top');
+    const bottomCounter = wrapperRef.current.querySelector('.preloader-counter-bottom');
 
-    // Heading characters stagger in
-    .fromTo('.preloader__char', {
-      y: 100,
+    // --- Phase 1: Cinematic Zoom-Fade Sequence ---
+    const inDuration = 0.8;
+    const stayTime = 0.2; // brief moment fully visible before the next crossfade starts
+    const stepTime = inDuration + stayTime;
+    const outDuration = 0.8; 
+    const totalImageTime = (IMAGES.length - 1) * stepTime + inDuration;
+
+    // Set initial state for all images
+    gsap.set([...topImages, ...bottomImages], { opacity: 0, scale: 0.85 });
+
+    IMAGES.forEach((_, i) => {
+      const startTime = i * stepTime;
+
+      // Incoming Image: fade in and scale up to 1
+      tl.to([topImages[i], bottomImages[i]], {
+        opacity: 1,
+        scale: 1,
+        duration: inDuration,
+        ease: "power2.out"
+      }, startTime);
+
+      // Outgoing Image: fade out and continue scaling up to 1.1
+      // (This starts exactly when the next image starts fading in)
+      if (i < IMAGES.length - 1) {
+        tl.to([topImages[i], bottomImages[i]], {
+          opacity: 0,
+          scale: 1.1,
+          duration: outDuration,
+          ease: "power2.out"
+        }, startTime + stepTime);
+      }
+    });
+
+    // Smooth Counter (matches the exact duration of the image sequence)
+    const counterObj = { val: 0 };
+    tl.to(counterObj, {
+      val: 100,
+      duration: totalImageTime + 0.2, // matched to images
+      ease: "power2.inOut",
+      onUpdate: () => {
+        const currentVal = Math.floor(counterObj.val);
+        if (topCounter) topCounter.innerHTML = currentVal.toString();
+        if (bottomCounter) bottomCounter.innerHTML = currentVal.toString();
+      }
+    }, 0); // start exactly at timeline 0
+
+    // --- Phase 2: The Elegant Collapse ---
+    tl.to('.preloader-images', {
+      scale: 0,
       opacity: 0,
-      rotateX: -90,
-    }, {
-      y: 0,
-      opacity: 1,
-      rotateX: 0,
-      stagger: 0.03,
+      duration: 1.2, // much gentler, deliberate collapse
+      ease: "expo.inOut"
+    }, ">"); // starts after counter reaches 100
+
+    tl.to('.preloader-counter', {
+      opacity: 0,
       duration: 0.8,
-      ease: 'power4.out',
-    }, 0.5)
+      ease: "power2.out"
+    }, "<"); // animate simultaneously with images
 
-    // Pause to let it breathe
-    .to({}, { duration: 0.3 })
+    // --- Phase 3: The Name Reveal ---
+    const topChars = gsap.utils.toArray('.preloader-name-top .preloader-char-anim');
+    const bottomChars = gsap.utils.toArray('.preloader-name-bottom .preloader-char-anim');
 
-    // Heading chars exit
-    .to('.preloader__char', {
-      y: -80,
-      opacity: 0,
-      stagger: 0.02,
-      duration: 0.5,
-      ease: 'power3.in',
-    })
+    // Both halves need identical staggers to stay in sync
+    tl.to(topChars, {
+      y: '0%',
+      duration: 0.8,
+      stagger: 0.04,
+      ease: "expo.out"
+    }, "+=0.1"); // slight delay after collapse
 
-    // Counter fade
-    .to('.preloader__counter', {
-      opacity: 0,
-      y: 10,
-      duration: 0.3,
-    }, '-=0.4')
+    tl.to(bottomChars, {
+      y: '0%',
+      duration: 0.8,
+      stagger: 0.04,
+      ease: "expo.out"
+    }, "<");
 
-    // Split curtains
-    .to('.preloader__half--top', {
+    // Hold briefly to let the user read the name
+    tl.to({}, { duration: 0.6 });
+
+    // --- Phase 4: The Gateway Split ---
+    tl.to('.preloader-top', {
       yPercent: -100,
-      duration: 1,
-      ease: 'power4.inOut',
-    })
-    .to('.preloader__half--bottom', {
+      duration: 1.2,
+      ease: "expo.inOut"
+    });
+    tl.to('.preloader-bottom', {
       yPercent: 100,
-      duration: 1,
-      ease: 'power4.inOut',
-    }, '<');
+      duration: 1.2,
+      ease: "expo.inOut"
+    }, "<");
 
-  }, { scope: containerRef });
+  }, { scope: wrapperRef });
 
-  const headingText = "CODE BY SASUNDUL©";
+  if (isComplete) return null;
 
   return (
-    <div ref={containerRef} className="preloader">
-      {/* Curtains */}
-      <div className="preloader__half preloader__half--top"></div>
-      <div className="preloader__half preloader__half--bottom"></div>
-
-      {/* Heading */}
-      <div className="preloader__heading">
-        <h2 className="heading-display flex overflow-hidden">
-          {headingText.split('').map((char, i) => (
-            <span key={i} className="preloader__char inline-block" style={char === ' ' ? { width: '0.3em' } : {}}>
-              {char}
-            </span>
-          ))}
-        </h2>
+    <div ref={wrapperRef} className="preloader-wrapper">
+      {/* Top Half Slice */}
+      <div className="preloader-half preloader-top">
+        {renderContent(true)}
       </div>
-
-      {/* Rolling Counter */}
-      <div className="preloader__counter flex">
-        {/* Hundreds digit: 0 → 1 */}
-        <div className="overflow-hidden h-[1.5em] leading-[1.5em]">
-          <div className="preloader__digit--1">
-            <div>0</div>
-            <div>1</div>
-          </div>
-        </div>
-        {/* Tens digit: 0 → 0 (cycles 0-9 then 0) */}
-        <div className="overflow-hidden h-[1.5em] leading-[1.5em]">
-          <div className="preloader__digit--2">
-            {[0,1,2,3,4,5,6,7,8,9,0].map((n, i) => (
-              <div key={i}>{n}</div>
-            ))}
-          </div>
-        </div>
-        {/* Units digit: 0 → 0 (cycles 0-9 twice then 0) */}
-        <div className="overflow-hidden h-[1.5em] leading-[1.5em]">
-          <div className="preloader__digit--3">
-            {[0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0].map((n, i) => (
-              <div key={i}>{n}</div>
-            ))}
-          </div>
-        </div>
+      {/* Bottom Half Slice */}
+      <div className="preloader-half preloader-bottom">
+        {renderContent(false)}
       </div>
     </div>
   );

@@ -16,6 +16,8 @@
   --nav-bg: rgba(245, 245, 240, 0.95);
   --footer-bg: #0a0a0a;
   --footer-text: #f1f1f1;
+  --vine-green: #3D6B35;
+  --vine-leaf: rgba(61, 107, 53, 0.15);
 }
 
 [data-theme="dark"] {
@@ -30,6 +32,8 @@
   --nav-bg: rgba(10, 10, 10, 0.95);
   --footer-bg: #0a0a0a;
   --footer-text: #f1f1f1;
+  --vine-green: #6BBF5A;
+  --vine-leaf: rgba(107, 191, 90, 0.15);
 }
 
 /* ========================= ANIMATION EASINGS ========================= */
@@ -238,7 +242,7 @@ html.lenis, html.lenis body { height: auto; }
 .id-card {
   background: #0a0a0a;
   color: #f1f1f1;
-  border-radius: 1.5rem;
+  border-radius: 0.75rem;
   padding: 1.5rem;
   width: 100%;
   max-width: 340px;
