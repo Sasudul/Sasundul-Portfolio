@@ -14,6 +14,7 @@ import WorkShowcase from './components/WorkShowcase';
 import Footer from './components/Footer';
 import ProjectModal from './components/ProjectModal';
 import ContactForm from './components/ContactForm';
+import CvModal from './components/CvModal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -172,6 +173,7 @@ export default function App() {
       {showContact && (
         <ContactForm onClose={() => setShowContact(false)} />
       )}
+      <CvModal />
     </ReactLenis>
   );
 }

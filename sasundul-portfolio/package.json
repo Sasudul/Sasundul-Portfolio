@@ -20,7 +20,9 @@
     "lenis": "^1.1.2",
     "lucide-react": "^0.561.0",
     "react": "^19.2.3",
+    "react-barcode": "^1.6.1",
     "react-dom": "^19.2.3",
+    "react-qr-code": "^2.2.0",
     "tailwind-merge": "^2.5.2",
     "three": "^0.184.0",
     "zustand": "^5.0.14"

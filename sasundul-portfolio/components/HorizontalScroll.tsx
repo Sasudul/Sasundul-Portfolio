@@ -31,80 +31,135 @@ function SplitLetters({ text, startIndex = 0 }: { text: string; startIndex?: num
    purple accent curls and flower dots. Positioned inline
    with the text so they scroll together.
    ═══════════════════════════════════════════════════════════ */
+/* ─────────────────────────────────────────────
+   HERO "I"
+   Two vines bloom out of the letter on section
+   entry — before the horizontal scroll starts.
+───────────────────────────────────────────── */
+const G = '#4CAF50';
+const GM = '#81C784';
+const GD = '#388E3C';
+const P = '#9C27B0';
+const PD = '#7B1FA2';
 
-const leafGreen = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEOUlEQVR4nO1YS4gcVRSt+Dcq+IuiRAdN1701Q2KE1oASdSPGD2qIED8L8RdURHSnC3VwowsREYdA97090WhUinTd2x0/0SSM4EIFPwvRhRJREzGgRhOQYKJpuT09Pa97qrunU9WjA3XgbYpX977zPued+zwvQ4YMGTJkyNAbJYiuY5Sxkl9e7s1XFILyOQT6F6PWCOUAoz7gzUcUoXKzkWhpoFsZFb35BEZ9YgaR+uro3wxSpqCyhkbC09v/K+SrC8eXyHnkRysI5UZGvacI+hCDPGaNUO6vfx/ePDRXRN6cXgnZE0eqQex3Qt1JqD8yyJ+d+sX/K58T6ONjI+HJAyNCIJ9NJSwG0e2MehOhfNXPQGfdQPbYStW82oLUiTDKd00ivlxh3yxREWUVgZQYdVfX2Qb9tU4cdIJBtzBKyKCbGOVdAvkmnpBuCheHJ6ZLBGTvVIJxlGVxfV4JojPs8FMgeWvWz9SukC8c2yt+IRctYZSnCWR/21b9cMPQxAkpEtGDztYCb0BYf2H5LFslbiWzMbUEhLKvGdiPhr0BIvTCoxmVXDIlX+9MJTih7G4GDqLLOvYLJF/05eKk+UavmjiGULY5AvBDKluMQL+cniG5pVM/Rn2bUX4p5cJFSXMWRqrnN1xEQzCiB9NQrXA6oDzZsR/I6sYMfmSHP2leQn3BmcAdaazIU44sVrv1ZZRXG4R/sps8yZYoQPVSJ+/BDUNy6pHGmhxcEF3jrMj+bpIajoTHMejr7h3CIC+zr7fZduknb82rLWDQ3xyhWZGIyIu5d45v0XiQ1b3+sYG7F6kzET8TSMXsiA3MVKprHNQv+snbp9/SrbOdAJNOu9i6WJK9ZjzZ13WMesrMvLKjKcMg9yYmUoJoZYu2Q7Syn//N4TLqIwT6Qd01xxP7ww54ESoXTP1nZtLJuTYxkUbQj51V+XQ29iMOJs+M8rDF6OCED5jNN6/V5qIvSYVIAeVyQjnsSOKzSWNyUF7KIC9NVaBt9mSnKzKp+i5CKTozd5hA7ksj7vjwFp9Qos4OWl7z0sTGi947ya1FGvs9tRqeUO+OXZ2gssZLG3ZwW/zX5DYbs9I2jfiEckfMuXnDGwRKOR2ZUVCBfMu+3pAsbrjIVaq2+MnvkTgw6rlxymPqZrPab4VHvlwfd4nydPu61wV6xLBLj0GeYZBDMYT2EehmezmxW3z9srdO6yDFdxHq9hjV2h5z6G8dCJHmgPzy8sl6vPvjQp0cyu66tHZ6aQE5ZORHvdGjCPT7dnLeXKDhWMmtKvtqIO+7z7IE+lxbn3+KufLiOSFTJ5SvLrSDTyjPM+onZj+6ENhlqse+Xtkeh6By7Yz+vq7z/kvQ0srZNtvmEEq+Xm23eq8CrADVM+dMigcNspfLlu3Xvbj736IE8qh7Ruy92JuvKKKsqj98J60SM2TIkCFDBq8z/gV0WnmApR4nxQAAAABJRU5ErkJggg==";
-const leafPurple = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAELElEQVR4nO1YS4gcZRDu9W1U8BVF8YGIiqIoRBeU6F5Mdrarpqt6pX3kEJ/xgYje9KAuXvQg4sFcVERRozJsV/WOb01IwIMKPg6iByWiiWLAZwISTDQj1bOPf2e7ZzLpntWF/qAv3f9f9X/911/11e95FSpUqFChQoXeQOExUFoPcXixt1QxGoengNJfqNxCpd0ofKe3FFEXpjYJ5xF+J0iC87ylBBR+cAER5RYo/Y1KsS88vroRHb9gXhOXkdLpIDyMSnUQvgXj8G5Qut8eVLrD3vuT42cuChEQfm128cI7skhNf/sdlbaC8DYQ/jNvXM7cz1D4gagRHT04IkqfzjisC98ASRCA8Jf9LLQPQjtsp7yWN1Q+EeFvnXC6Mn3Z8oZAaRSVnkOl7V0Xp/RLSlx4Myi9jkoNEN6ASm+j0tc5hDZEjejIUomg8G8zDsaULsoaw8In2OEH5RX22DjLdiuevv3QXvZrwmeD0iMgvKvjB3ww8vyNR5RHRGnPLBHhc70BIYzDk9q7xO7OvFiaAxTeOWPYFz7fGyCiRnQwCD87j0wSrC3FOAr/4NSPy/PGWUj5SpcU9TeyeeQQFH7f2ZXvSwkxVPpi7g/RNbnjhN8E4Z9rjWh5YZ9NPCNVEXNk7iqDSMM5gA91GcfTYz60w1/Yr/CTjt9NXgkGH3b+TLPrWKWXpsf9aJW8SEhgHF7mRMIeUjr2QG21DQqvdojs6pZSo0Z0GCi94tYQVHoB4vB6C5e+HLe8IVT61fE9XIhI7a3a4fNzPHGvObZwt5A6c39C4SmTI7Ywy1Ld7KDw5/347UtvmfLd7x+QBGutsOVW/rTYUgzC64IkOGaBX6VNs/JI6dbCRFB4ZccCVvYz3xQuCN8LSlvaqjmLGP1hB7w+VT9rloiJyTmdd21hItNkPnIcf7I/8iMLlp59pXvMRg6h3SbzTWu5KnosCS4thYivdAUK73MO8mNFbUIcXohKT811oPMIbXWTTNm66xknvPah0m1l2IXJ8XNQWPJVNL3slYlV7646yu1F0ngvsYfHJLg5a3esC/XKhh3cefqrTWi9tbZl2EelNRk78qo3CARJcEFnQwXC3/hxCEXsWiIAJ1N1kCleR7IQJMGpmZknzW60pt8OD5T87CLKM0S+6lVADxhW9FDpURTem0FoJwhPpjcnwsPwBhy3YH4jWl5XugmEN3bOh4x3qHSdN0jYDWS7H+9xwWBNWnq+0tuW7JsW4b1GfmJi4iBU+q6TnLcYMMWadnhOV9nPA0rvudeyIPx4x/d/anF42qKQSQk1cZkdfFB6ApU+TuVHfuxvt6znJ8FVnXb8OKxlhNw6779Efap+sv1tUwiQBFdbVe/VgGETT1y0VDxogPC2jh3p2tz9bwFK97lnxO6LvaUKUBpNL7+LdokVKlSoUKGCl49/AeefJbD5CiTqAAAAAElFTkSuQmCC";
-
-function Leaf({ type, x, y, angle }: { type: 'green'|'purple', x:number, y:number, angle:number }) {
+function Leaf({ cx, cy, angle, fill, s, op = 1 }: { cx: number, cy: number, angle: number, fill: string, s: number, op?: number }) {
   return (
-    <image 
-      href={type === 'green' ? leafGreen : leafPurple} 
-      x={x - 12} 
-      y={y - 12} 
-      width="24" 
-      height="24" 
-      transform={`rotate(${angle} ${x} ${y})`} 
-      className="vine-leaf" 
+    <path
+      className="hero-leaf"
+      d={`M ${cx} ${cy} C ${cx - s / 2} ${cy - s} ${cx + s / 2} ${cy - s} ${cx} ${cy - s * 1.5} C ${cx + s / 2} ${cy - s / 2} ${cx + s / 2} ${cy} ${cx} ${cy}`}
+      fill={fill}
+      opacity={op}
+      transform={`rotate(${angle} ${cx} ${cy})`}
     />
+  );
+}
+
+function Dot({ cx, cy, r, fill }: { cx: number, cy: number, r: number, fill: string }) {
+  return <circle className="hero-dot" cx={cx} cy={cy} r={r} fill={fill} />;
+}
+
+function HeroI() {
+  return (
+    <span
+      className="hero-i relative inline-block flex-shrink-0"
+      style={{ marginRight: '0.2em' }}
+    >
+      <span className="heading-hero" style={{ color: 'var(--text, #0d0d0d)' }}>I</span>
+      <svg
+        className="absolute pointer-events-none z-[2]"
+        style={{ top: '-60%', left: '-95%', width: '290%', height: '220%', overflow: 'visible' }}
+        viewBox="0 0 100 100"
+        fill="none"
+      >
+        {/* left vine climbing up */}
+        <path
+          className="hero-stem"
+          d="M 50 88 C 36 72 18 76 16 58 C 14 40 28 30 20 18 C 14 8 4 10 6 2"
+          stroke={G} strokeWidth="1.7" strokeLinecap="round"
+        />
+        <path className="hero-stem" d="M 18 54 C 10 50 4 54 2 46" stroke={GM} strokeWidth="1.1" strokeLinecap="round" />
+
+        <Leaf cx={18} cy={64} angle={-140} fill={G} s={9} />
+        <Leaf cx={19} cy={36} angle={-160} fill={GM} s={8} op={0.85} />
+        <Leaf cx={8} cy={12} angle={-120} fill={GM} s={7} op={0.7} />
+        <Dot cx={2} cy={46} r={2.8} fill={GD} />
+        <Dot cx={5} cy={20} r={2.2} fill={GD} />
+
+        {/* right vine dropping down */}
+        <path
+          className="hero-stem"
+          d="M 50 12 C 64 28 80 24 82 42 C 84 58 70 68 80 82 C 86 92 96 88 94 98"
+          stroke={P} strokeWidth="1.7" strokeLinecap="round"
+        />
+        <path className="hero-stem" d="M 82 46 C 90 50 96 46 98 54" stroke={P} strokeWidth="1.1" strokeLinecap="round" />
+
+        <Leaf cx={82} cy={36} angle={40} fill={P} s={9} />
+        <Leaf cx={76} cy={68} angle={20} fill={P} s={8} op={0.85} />
+        <Leaf cx={92} cy={92} angle={60} fill={P} s={7} op={0.7} />
+        <Dot cx={98} cy={54} r={2.8} fill={PD} />
+        <Dot cx={96} cy={78} r={2.2} fill={PD} />
+      </svg>
+    </span>
   );
 }
 
 function IntroVine() {
   return (
-    <svg className="absolute pointer-events-none z-[2]" style={{ top: '-80%', left: '-20%', width: '150%', height: '260%', overflow: 'visible' }} viewBox="0 0 600 200" fill="none">
-      <defs>
-        <linearGradient id="vine-gradient" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
-          <stop stopColor="#4CAF50"/>
-          <stop offset="1" stopColor="#9C27B0"/>
-        </linearGradient>
-      </defs>
-      <path className="vine-stem" d="M -50 150 C 100 300, 200 -100, 300 100 C 400 300, 500 -100, 650 150" stroke="url(#vine-gradient)" strokeWidth="3" strokeLinecap="round"/>
-      <Leaf type="green" x={60} y={120} angle={-45} />
-      <Leaf type="purple" x={150} y={100} angle={45} />
-      <Leaf type="green" x={240} y={40} angle={-30} />
-      <Leaf type="purple" x={350} y={150} angle={60} />
-      <Leaf type="green" x={450} y={100} angle={-60} />
-      <Leaf type="purple" x={540} y={50} angle={30} />
-    </svg>
+    <>
+      <svg className="absolute pointer-events-none z-[0]" style={{ top: '-80%', left: '-20%', width: '150%', height: '260%', overflow: 'visible', filter: 'blur(1.5px)' }} viewBox="0 0 600 200" fill="none">
+        <defs>
+          <linearGradient id="vine-gradient" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
+            <stop stopColor="#4CAF50" />
+            <stop offset="1" stopColor="#9C27B0" />
+          </linearGradient>
+        </defs>
+        {/* DNA Helix 1 (Background) */}
+        <path className="vine-stem opacity-0" d="M -50 100 C 50 0, 150 0, 250 100 C 350 200, 450 200, 550 100 C 600 50, 650 50, 700 100" stroke="url(#vine-gradient)" strokeWidth="1.5" strokeOpacity="0.35" strokeLinecap="round" />
+      </svg>
+      <svg className="absolute pointer-events-none z-[20]" style={{ top: '-80%', left: '-20%', width: '150%', height: '260%', overflow: 'visible', filter: 'drop-shadow(0px 15px 15px rgba(0,0,0,0.9))' }} viewBox="0 0 600 200" fill="none">
+        {/* DNA Helix 2 (Foreground) */}
+        <path className="vine-stem opacity-0" d="M -50 100 C 50 200, 150 200, 250 100 C 350 0, 450 0, 550 100 C 600 150, 650 150, 700 100" stroke="url(#vine-gradient)" strokeWidth="4" strokeLinecap="round" />
+      </svg>
+    </>
   );
 }
 
 function DesignerVine() {
   return (
-    <svg className="absolute pointer-events-none z-[2]" style={{ top: '-100%', left: '-30%', width: '180%', height: '300%', overflow: 'visible' }} viewBox="0 0 500 200" fill="none">
-      <path className="vine-stem" d="M -50 50 C 100 -100, 200 300, 350 100 C 450 -50, 500 100, 550 50" stroke="url(#vine-gradient)" strokeWidth="3" strokeLinecap="round"/>
-      <Leaf type="purple" x={50} y={30} angle={-60} />
-      <Leaf type="green" x={140} y={120} angle={45} />
-      <Leaf type="purple" x={250} y={180} angle={75} />
-      <Leaf type="green" x={350} y={100} angle={-45} />
-      <Leaf type="purple" x={450} y={50} angle={30} />
-    </svg>
+    <>
+      <svg className="absolute pointer-events-none z-[0]" style={{ top: '-100%', left: '-30%', width: '180%', height: '300%', overflow: 'visible', filter: 'blur(1.5px)' }} viewBox="0 0 500 200" fill="none">
+        <path className="vine-stem opacity-0" d="M -50 100 C 50 -20, 150 -20, 250 100 C 350 220, 450 220, 550 100" stroke="url(#vine-gradient)" strokeWidth="1.5" strokeOpacity="0.35" strokeLinecap="round" />
+      </svg>
+      <svg className="absolute pointer-events-none z-[20]" style={{ top: '-100%', left: '-30%', width: '180%', height: '300%', overflow: 'visible', filter: 'drop-shadow(0px 15px 15px rgba(0,0,0,0.9))' }} viewBox="0 0 500 200" fill="none">
+        <path className="vine-stem opacity-0" d="M -50 100 C 50 220, 150 220, 250 100 C 350 -20, 450 -20, 550 100" stroke="url(#vine-gradient)" strokeWidth="4" strokeLinecap="round" />
+      </svg>
+    </>
   );
 }
 
 function DeveloperVine() {
   return (
-    <svg className="absolute pointer-events-none z-[2]" style={{ top: '-90%', left: '-20%', width: '160%', height: '280%', overflow: 'visible' }} viewBox="0 0 700 200" fill="none">
-      <path className="vine-stem" d="M -50 100 Q 100 -100, 250 100 T 550 100 T 750 100" stroke="url(#vine-gradient)" strokeWidth="3" strokeLinecap="round"/>
-      <Leaf type="green" x={100} y={30} angle={-30} />
-      <Leaf type="purple" x={250} y={100} angle={45} />
-      <Leaf type="green" x={400} y={170} angle={120} />
-      <Leaf type="purple" x={550} y={100} angle={-45} />
-      <Leaf type="green" x={650} y={50} angle={-60} />
-    </svg>
+    <>
+      <svg className="absolute pointer-events-none z-[0]" style={{ top: '-90%', left: '-20%', width: '160%', height: '280%', overflow: 'visible', filter: 'blur(1.5px)' }} viewBox="0 0 700 200" fill="none">
+        <path className="vine-stem opacity-0" d="M -50 100 C 100 0, 250 0, 400 100 C 550 200, 700 200, 850 100" stroke="url(#vine-gradient)" strokeWidth="1.5" strokeOpacity="0.35" strokeLinecap="round" />
+      </svg>
+      <svg className="absolute pointer-events-none z-[20]" style={{ top: '-90%', left: '-20%', width: '160%', height: '280%', overflow: 'visible', filter: 'drop-shadow(0px 15px 15px rgba(0,0,0,0.9))' }} viewBox="0 0 700 200" fill="none">
+        <path className="vine-stem opacity-0" d="M -50 100 C 100 200, 250 200, 400 100 C 550 0, 700 0, 850 100" stroke="url(#vine-gradient)" strokeWidth="4" strokeLinecap="round" />
+      </svg>
+    </>
   );
 }
 
 function WebflowVine() {
   return (
-    <svg className="absolute pointer-events-none z-[2]" style={{ top: '-110%', left: '-40%', width: '200%', height: '320%', overflow: 'visible' }} viewBox="0 0 600 200" fill="none">
-      <path className="vine-stem" d="M -100 200 C 100 -100, 300 300, 500 0 C 600 -100, 650 100, 700 200" stroke="url(#vine-gradient)" strokeWidth="3" strokeLinecap="round"/>
-      <Leaf type="purple" x={50} y={100} angle={-45} />
-      <Leaf type="green" x={180} y={100} angle={45} />
-      <Leaf type="purple" x={350} y={150} angle={-80} />
-      <Leaf type="green" x={480} y={20} angle={30} />
-      <Leaf type="purple" x={580} y={-30} angle={-45} />
-    </svg>
+    <>
+      <svg className="absolute pointer-events-none z-[0]" style={{ top: '-110%', left: '-40%', width: '200%', height: '320%', overflow: 'visible', filter: 'blur(1.5px)' }} viewBox="0 0 600 200" fill="none">
+        <path className="vine-stem opacity-0" d="M -100 100 C 0 -50, 200 -50, 300 100 C 400 250, 600 250, 700 100" stroke="url(#vine-gradient)" strokeWidth="1.5" strokeOpacity="0.35" strokeLinecap="round" />
+      </svg>
+      <svg className="absolute pointer-events-none z-[20]" style={{ top: '-110%', left: '-40%', width: '200%', height: '320%', overflow: 'visible', filter: 'drop-shadow(0px 15px 15px rgba(0,0,0,0.9))' }} viewBox="0 0 600 200" fill="none">
+        <path className="vine-stem opacity-0" d="M -100 100 C 0 250, 200 250, 300 100 C 400 -50, 600 -50, 700 100" stroke="url(#vine-gradient)" strokeWidth="4" strokeLinecap="round" />
+      </svg>
+    </>
   );
 }
 
@@ -149,8 +204,8 @@ export default function HorizontalScroll() {
           scrollTrigger: {
             trigger: letter,
             containerAnimation: scrollTween,
-            start: 'left 88%',
-            end: 'left 55%',
+            start: 'left 95%', // Wait until it's really on screen
+            end: 'left 60%',
             scrub: true,
           }
         }
@@ -162,59 +217,50 @@ export default function HorizontalScroll() {
       const vineWrap = path.closest('.vine-wrap');
       if (!vineWrap) return;
       const len = path.getTotalLength();
-      gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
+      // Add extra length to array/offset to guarantee the line is 100% hidden at the start
+      gsap.set(path, { strokeDasharray: len + 10, strokeDashoffset: len + 10, opacity: 1 });
       gsap.to(path, {
         strokeDashoffset: 0,
         ease: 'none',
         scrollTrigger: {
           trigger: vineWrap,
           containerAnimation: scrollTween,
-          start: 'left 78%',
-          end: 'left 22%',
+          start: 'left 90%', // Start drawing exactly as the word enters the screen
+          end: 'right 60%', // Finish drawing exactly as the last letter finishes its animation
           scrub: true,
         }
       });
     });
 
-    // ── Vine leaves — scale in with bounce ──
-    gsap.utils.toArray<SVGElement>('.vine-leaf').forEach((leaf) => {
-      const vineWrap = leaf.closest('.vine-wrap');
-      if (!vineWrap) return;
-      gsap.fromTo(leaf,
-        { scale: 0, transformOrigin: 'center center' },
-        {
-          scale: 1,
-          ease: 'back.out(2.5)',
-          scrollTrigger: {
-            trigger: vineWrap,
-            containerAnimation: scrollTween,
-            start: 'left 58%',
-            end: 'left 32%',
-            scrub: true,
-          }
-        }
-      );
+    // ── Hero "I" initial bloom ──
+    gsap.utils.toArray<SVGPathElement>('.hero-stem').forEach(path => {
+      const len = path.getTotalLength();
+      gsap.set(path, { strokeDasharray: len, strokeDashoffset: len });
     });
 
-    // ── Purple dots — pop in after leaves ──
-    gsap.utils.toArray<SVGElement>('.vine-dot').forEach((dot) => {
-      const vineWrap = dot.closest('.vine-wrap');
-      if (!vineWrap) return;
-      gsap.fromTo(dot,
-        { scale: 0, transformOrigin: 'center center' },
-        {
-          scale: 1,
-          ease: 'back.out(4)',
-          scrollTrigger: {
-            trigger: vineWrap,
-            containerAnimation: scrollTween,
-            start: 'left 48%',
-            end: 'left 28%',
-            scrub: true,
-          }
-        }
-      );
+    gsap.to('.hero-stem', {
+      strokeDashoffset: 0,
+      duration: 1.5,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: wrapper,
+        start: 'top 60%',
+      }
     });
+
+    gsap.fromTo('.hero-leaf, .hero-dot',
+      { scale: 0, transformOrigin: 'center' },
+      {
+        scale: 1,
+        duration: 1,
+        stagger: 0.1,
+        ease: 'back.out(2)',
+        scrollTrigger: {
+          trigger: wrapper,
+          start: 'top 60%',
+        }
+      }
+    );
 
   }, { scope: wrapperRef });
 
@@ -229,24 +275,25 @@ export default function HorizontalScroll() {
         <div ref={trackRef} className="horizontal-scroll__track">
 
           {/* Leading viewport padding */}
-          <div className="flex-shrink-0 w-[50vw]" />
+          <div className="flex-shrink-0 w-[90vw]" />
 
           {/* ── I CRAFT DIGITAL EXPERIENCES, with vine ── */}
           <span className="relative inline-flex items-baseline vine-wrap flex-shrink-0 mx-[0.12em] mr-[0.5em]">
-            <span className="heading-hero" style={{ color: 'var(--text)' }}>
-              <SplitLetters text="I CRAFT DIGITAL EXPERIENCES" />
+            <HeroI />
+            <span className="heading-hero relative z-10" style={{ color: 'var(--text)', textShadow: '0px 10px 15px rgba(0,0,0,0.8)' }}>
+              <SplitLetters text="  CRAFT DIGITAL EXPERIENCES" startIndex={1} />
             </span>
             <IntroVine />
           </span>
 
           {/* ── AS A ── */}
-          <span className="heading-hero flex-shrink-0 mx-[0.12em] mr-[0.5em]" style={{ color: 'var(--text)' }}>
+          <span className="heading-hero relative z-10 flex-shrink-0 mx-[0.12em] mr-[0.5em]" style={{ color: 'var(--text)', textShadow: '0px 10px 15px rgba(0,0,0,0.8)' }}>
             <SplitLetters text="AS A" startIndex={27} />
           </span>
 
           {/* ── DESIGNER, with vine ── */}
           <span className="relative inline-block vine-wrap flex-shrink-0 mx-[0.12em] mr-[0.5em]">
-            <span className="heading-hero" style={{ color: 'var(--text)' }}>
+            <span className="heading-hero relative z-10" style={{ color: 'var(--text)', textShadow: '0px 10px 15px rgba(0,0,0,0.8)' }}>
               <SplitLetters text="DESIGNER," startIndex={31} />
             </span>
             <DesignerVine />
@@ -254,20 +301,20 @@ export default function HorizontalScroll() {
 
           {/* ── FRONTEND DEVELOPER with vine ── */}
           <span className="relative inline-flex items-baseline vine-wrap flex-shrink-0 mx-[0.12em] mr-[0.5em]">
-            <span className="heading-hero" style={{ color: 'var(--text)' }}>
+            <span className="heading-hero relative z-10" style={{ color: 'var(--text)', textShadow: '0px 10px 15px rgba(0,0,0,0.8)' }}>
               <SplitLetters text="FRONTEND DEVELOPER" startIndex={40} />
             </span>
             <DeveloperVine />
           </span>
 
           {/* ── & ── */}
-          <span className="heading-hero flex-shrink-0 mx-[0.12em] mr-[0.5em]" style={{ color: 'var(--text)' }}>
+          <span className="heading-hero relative z-10 flex-shrink-0 mx-[0.12em] mr-[0.5em]" style={{ color: 'var(--text)', textShadow: '0px 10px 15px rgba(0,0,0,0.8)' }}>
             <SplitLetters text="&" startIndex={58} />
           </span>
 
           {/* ── WEBFLOW EXPERT. with vine ── */}
           <span className="relative inline-flex items-baseline vine-wrap flex-shrink-0 mx-[0.12em]">
-            <span className="heading-hero" style={{ color: 'var(--text)' }}>
+            <span className="heading-hero relative z-10" style={{ color: 'var(--text)', textShadow: '0px 10px 15px rgba(0,0,0,0.8)' }}>
               <SplitLetters text="BACKEND EXPERT." startIndex={59} />
             </span>
             <WebflowVine />
