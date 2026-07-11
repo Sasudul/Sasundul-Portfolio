@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useGSAP } from '@gsap/react';
+  import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { X, Send } from 'lucide-react';
 

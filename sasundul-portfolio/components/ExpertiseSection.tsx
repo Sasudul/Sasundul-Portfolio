@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import PixelBlast from './PixelBlast';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -63,11 +64,24 @@ export default function ExpertiseSection() {
   }, { scope: sectionRef });
 
   return (
-    <section ref={sectionRef} className="py-24 md:py-40 px-6 md:px-12" style={{ background: 'var(--bg)' }}>
-      <div className="max-w-6xl mx-auto">
+    <section ref={sectionRef} className="relative overflow-hidden py-24 md:py-40 px-6 md:px-12" style={{ background: 'var(--bg)' }}>
+      
+      {/* Interactive 3D Background */}
+      <PixelBlast 
+        variant="circle" 
+        color="#707070" 
+        liquid={true} 
+        enableRipples={true} 
+        rippleIntensityScale={1.5}
+        rippleSpeed={0.5}
+        patternScale={1.5}
+        opacity={0.3} // Subtle transparency
+      />
+
+      <div className="max-w-6xl mx-auto relative z-10 pointer-events-none">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
           {/* Left - Sticky */}
-          <div className="md:sticky md:top-32 md:self-start">
+          <div className="md:sticky md:top-32 md:self-start pointer-events-auto">
             <h2 className="expertise-heading text-5xl md:text-7xl font-display font-bold uppercase tracking-tighter" style={{ color: 'var(--text)' }}>
               Expertise
             </h2>
@@ -78,7 +92,7 @@ export default function ExpertiseSection() {
           </div>
 
           {/* Right - Scrolling expertise items */}
-          <div className="flex flex-col gap-6 md:gap-8">
+          <div className="flex flex-col gap-6 md:gap-8 pointer-events-auto">
             {EXPERTISE.map((item, idx) => (
               <div key={idx} className="expertise__item expertise-item-anim bg-[#0a0a0a] text-[#f1f1f1] rounded-xl p-8 md:p-10 shadow-lg">
                 <div className="flex flex-col gap-4">

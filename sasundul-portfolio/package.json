@@ -19,6 +19,7 @@
     "hammerjs": "^2.0.8",
     "lenis": "^1.1.2",
     "lucide-react": "^0.561.0",
+    "postprocessing": "^6.39.2",
     "react": "^19.2.3",
     "react-barcode": "^1.6.1",
     "react-dom": "^19.2.3",

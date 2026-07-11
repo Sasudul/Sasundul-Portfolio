@@ -62,10 +62,10 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
     const bottomCounter = wrapperRef.current.querySelector('.preloader-counter-bottom');
 
     // --- Phase 1: Cinematic Zoom-Fade Sequence ---
-    const inDuration = 0.8;
-    const stayTime = 0.2; // brief moment fully visible before the next crossfade starts
+    const inDuration = 0.3;
+    const stayTime = 0.125; // brief moment fully visible before the next crossfade starts
     const stepTime = inDuration + stayTime;
-    const outDuration = 0.8; 
+    const outDuration = 0.3; 
     const totalImageTime = (IMAGES.length - 1) * stepTime + inDuration;
 
     // Set initial state for all images
