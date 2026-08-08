@@ -84,16 +84,17 @@ export default function ProjectModal({ project, onClose }: { project: Project, o
         </button>
 
         {/* Left Side: Image / Media */}
-        <div className="w-full md:w-1/2 relative bg-[#111] min-h-[300px] md:min-h-full modal-element flex-shrink-0">
-          <img src={project.image} alt={project.title} className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] to-transparent md:bg-gradient-to-r"></div>
+        <div className="w-full md:w-1/2 relative bg-[#111] min-h-[300px] md:min-h-full modal-element flex-shrink-0 overflow-hidden flex items-center justify-center">
+          <img src={project.image} alt={project.title} className="absolute inset-0 w-full h-full object-cover filter blur-2xl opacity-40 scale-125" />
+          <img src={project.image} alt={project.title} className="relative z-10 w-full h-full object-contain p-4" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a]/80 via-transparent to-transparent z-20 pointer-events-none"></div>
         </div>
 
         {/* Right Side: Details */}
         <div className="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center bg-[#0a0a0a] relative z-10">
           <div className="modal-element">
-            <div className="text-[#a890ff] text-xs uppercase font-bold tracking-widest mb-6 flex items-center gap-3">
-              <span className="w-8 h-[2px] bg-[#a890ff]"></span>
+            <div className="text-white/60 text-xs uppercase font-bold tracking-widest mb-6 flex items-center gap-3">
+              <span className="w-8 h-[2px] bg-white/40"></span>
               {project.category}
             </div>
             <h2 className="text-5xl md:text-7xl font-display font-bold uppercase tracking-tighter text-white mb-6 leading-[0.85]">{project.title}</h2>
@@ -121,7 +122,7 @@ export default function ProjectModal({ project, onClose }: { project: Project, o
           </div>
 
           <div className="modal-element flex flex-wrap gap-4 mt-auto">
-            <a href="#" className="flex-1 py-5 bg-[#f1f1f1] text-black uppercase font-bold tracking-widest hover:bg-[#a890ff] hover:text-white transition-colors duration-300 flex items-center justify-center gap-4 rounded-full">
+            <a href="#" className="flex-1 py-5 bg-[#f1f1f1] text-black uppercase font-bold tracking-widest hover:bg-white hover:text-black transition-colors duration-300 flex items-center justify-center gap-4 rounded-full">
               Live Preview <ArrowUpRight size={20} />
             </a>
             <a href="#" className="w-16 h-16 border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-black transition-all">

@@ -269,7 +269,6 @@ export default function HorizontalScroll() {
       ref={wrapperRef}
       className="relative overflow-hidden"
       style={{ background: 'var(--bg)' }}
-      data-lenis-prevent
     >
       <div className="h-screen flex items-center">
         <div ref={trackRef} className="horizontal-scroll__track">
@@ -280,20 +279,20 @@ export default function HorizontalScroll() {
           {/* ── I CRAFT DIGITAL EXPERIENCES, with vine ── */}
           <span className="relative inline-flex items-baseline vine-wrap flex-shrink-0 mx-[0.12em] mr-[0.5em]">
             <HeroI />
-            <span className="heading-hero relative z-10" style={{ color: 'var(--text)', textShadow: '0px 10px 15px rgba(0,0,0,0.8)' }}>
+            <span className="heading-hero relative z-10" style={{ color: 'var(--text)' }}>
               <SplitLetters text="  CRAFT DIGITAL EXPERIENCES" startIndex={1} />
             </span>
             <IntroVine />
           </span>
 
           {/* ── AS A ── */}
-          <span className="heading-hero relative z-10 flex-shrink-0 mx-[0.12em] mr-[0.5em]" style={{ color: 'var(--text)', textShadow: '0px 10px 15px rgba(0,0,0,0.8)' }}>
+          <span className="heading-hero relative z-10 flex-shrink-0 mx-[0.12em] mr-[0.5em]" style={{ color: 'var(--text)' }}>
             <SplitLetters text="AS A" startIndex={27} />
           </span>
 
           {/* ── DESIGNER, with vine ── */}
           <span className="relative inline-block vine-wrap flex-shrink-0 mx-[0.12em] mr-[0.5em]">
-            <span className="heading-hero relative z-10" style={{ color: 'var(--text)', textShadow: '0px 10px 15px rgba(0,0,0,0.8)' }}>
+            <span className="heading-hero relative z-10" style={{ color: 'var(--text)' }}>
               <SplitLetters text="DESIGNER," startIndex={31} />
             </span>
             <DesignerVine />
@@ -301,20 +300,20 @@ export default function HorizontalScroll() {
 
           {/* ── FRONTEND DEVELOPER with vine ── */}
           <span className="relative inline-flex items-baseline vine-wrap flex-shrink-0 mx-[0.12em] mr-[0.5em]">
-            <span className="heading-hero relative z-10" style={{ color: 'var(--text)', textShadow: '0px 10px 15px rgba(0,0,0,0.8)' }}>
+            <span className="heading-hero relative z-10" style={{ color: 'var(--text)' }}>
               <SplitLetters text="FRONTEND DEVELOPER" startIndex={40} />
             </span>
             <DeveloperVine />
           </span>
 
           {/* ── & ── */}
-          <span className="heading-hero relative z-10 flex-shrink-0 mx-[0.12em] mr-[0.5em]" style={{ color: 'var(--text)', textShadow: '0px 10px 15px rgba(0,0,0,0.8)' }}>
+          <span className="heading-hero relative z-10 flex-shrink-0 mx-[0.12em] mr-[0.5em]" style={{ color: 'var(--text)' }}>
             <SplitLetters text="&" startIndex={58} />
           </span>
 
           {/* ── WEBFLOW EXPERT. with vine ── */}
           <span className="relative inline-flex items-baseline vine-wrap flex-shrink-0 mx-[0.12em]">
-            <span className="heading-hero relative z-10" style={{ color: 'var(--text)', textShadow: '0px 10px 15px rgba(0,0,0,0.8)' }}>
+            <span className="heading-hero relative z-10" style={{ color: 'var(--text)' }}>
               <SplitLetters text="BACKEND EXPERT." startIndex={59} />
             </span>
             <WebflowVine />

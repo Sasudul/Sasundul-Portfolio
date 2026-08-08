@@ -68,7 +68,7 @@ export default function ProjectsPage({ projects, onBack }: ProjectsPageProps) {
         {/* Back Button */}
         <button 
           onClick={onBack}
-          className="flex items-center gap-4 text-[#f1f1f1] hover:text-[#a890ff] uppercase tracking-widest font-bold text-lg mb-16 transition-colors group cursor-pointer"
+          className="flex items-center gap-4 text-[#f1f1f1] hover:text-white uppercase tracking-widest font-bold text-lg mb-16 transition-colors group cursor-pointer"
         >
           <ArrowLeft size={24} className="group-hover:-translate-x-2 transition-transform duration-300" />
           Back to Portfolio
@@ -89,13 +89,13 @@ export default function ProjectsPage({ projects, onBack }: ProjectsPageProps) {
               {/* Click to expand case study */}
               <div 
                 onClick={() => setSelectedProject(p)}
-                className="proj-img-wrap overflow-hidden rounded-3xl aspect-[4/3] bg-[#141414] mb-8 relative border border-white/10 shadow-xl hover:shadow-[#a890ff]/10 hover:border-[#a890ff]/30 transition-all duration-500 cursor-pointer flex items-center justify-center p-4 group-hover:bg-[#1a1a1a]"
+                className="proj-img-wrap overflow-hidden rounded-3xl aspect-[16/9] bg-[#141414] mb-8 relative border border-white/10 shadow-xl hover:shadow-white/5 hover:border-white/30 transition-all duration-500 cursor-pointer flex items-center justify-center relative group-hover:bg-[#1a1a1a]"
               >
                 {/* Image is styled to cover nicely but respect bounds */}
                 <img 
                   src={p.image} 
                   alt={p.title} 
-                  className="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1.5s] rounded-2xl" 
+                  className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-[1.5s] rounded-2xl" 
                 />
                 
                 {/* Hover Visual hint */}
@@ -105,11 +105,11 @@ export default function ProjectsPage({ projects, onBack }: ProjectsPageProps) {
               </div>
 
               <div className="flex flex-col flex-grow">
-                <div className="text-[#a890ff] text-xs uppercase font-bold tracking-widest mb-4 flex items-center gap-3">
-                  <span className="w-8 h-[2px] bg-[#a890ff]"></span>
+                <div className="text-white/60 text-xs uppercase font-bold tracking-widest mb-4 flex items-center gap-3">
+                  <span className="w-8 h-[2px] bg-white/40"></span>
                   {p.category}
                 </div>
-                <h3 className="text-4xl font-display font-bold uppercase tracking-tighter mb-4 group-hover:text-[#a890ff] transition-colors">{p.title}</h3>
+                <h3 className="text-4xl font-display font-bold uppercase tracking-tighter mb-4 group-hover:text-white transition-colors">{p.title}</h3>
                 <p className="text-gray-400 font-mono text-xs uppercase mb-8 mt-auto">{p.tech}</p>
                 
                 <button className="flex items-center gap-3 text-sm font-bold uppercase tracking-widest w-fit border-b border-transparent group-hover:border-[#f1f1f1] transition-all pb-1 cursor-pointer">

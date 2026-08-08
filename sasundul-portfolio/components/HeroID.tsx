@@ -2,7 +2,7 @@ import { useRef, useCallback } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 
-const PROFILE_IMAGE_URL = "https://avatars.githubusercontent.com/u/158804448?s=400&u=8edbb46c2957de94b2e962060f06cccea207867c&v=4";
+const PROFILE_IMAGE_URL = "/image.png";
 
 const TECH_BADGES = ['React.js', 'Spring Boot', 'Next.js', 'Tailwind CSS', 'Figma'];
 

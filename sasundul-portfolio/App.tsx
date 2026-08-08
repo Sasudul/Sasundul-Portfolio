@@ -15,74 +15,99 @@ import Footer from './components/Footer';
 import ProjectModal from './components/ProjectModal';
 import ContactForm from './components/ContactForm';
 import CvModal from './components/CvModal';
+import SocialDock from './components/SocialDock';
 
 gsap.registerPlugin(ScrollTrigger);
 
 // ========================= PROJECT DATA =========================
 export const PROJECTS = [
   {
-    id: 1,
-    title: "FLOODNAV",
-    category: "DISASTER RESPONSE",
-    tech: "React • TypeScript • Spring Boot",
-    image: "/FloodNav-1.png",
+    id: 3,
+    title: "ZÉRIN.LK",
+    category: "E-COMMERCE • BEAUTY",
+    tech: "Next.js 16 • React 19 • TypeScript • Tailwind CSS",
+    image: "/Zerin.png",
     year: "2025",
   },
   {
     id: 2,
     title: "VAP CONSTRUCTION",
-    category: "PORTFOLIO",
-    tech: "React.js • Tailwind CSS",
-    image: "/Vap-Construction-1.jpeg",
+    category: "CONSTRUCTION PORTFOILIO",
+    tech: "React.js • Tailwind CSS • Vite",
+    image: "/Vap-Construction.png",
     year: "2025",
   },
   {
-    id: 3,
-    title: "BUDGETLY",
-    category: "PERSONAL FINANCE",
-    tech: "Expense Tracking • Budgeting",
-    image: "/Budgetly-1.jpeg",
-    year: "2024",
+    id: 1,
+    title: "FLOODNAV",
+    category: "DISASTER RESPONSE",
+    tech: "React • TypeScript • Spring Boot",
+    image: "/FloodNav.png",
+    year: "2025",
   },
   {
     id: 4,
-    title: "PIZZAMANIA",
-    category: "MOBILE APP",
-    tech: "Java • SQLite • Firebase",
-    image: "/Pizza-Mania-1.jpeg",
-    year: "2024",
+    title: "LANDSLIDE ALERT",
+    category: "EARLY WARNING SYSTEM",
+    tech: "HTML • C++ • IoT Sensors",
+    image: "/LandSlideAlert.png",
+    year: "2025",
   },
   {
     id: 5,
-    title: "MEDCONNECT",
-    category: "HEALTHCARE",
-    tech: "React • Spring Boot • MySQL",
-    image: "/E-channeling-System-1.jpeg",
-    year: "2024",
+    title: "FLEET TRACKING",
+    category: "LOGISTICS & TELEMATICS",
+    tech: "React • Node.js • Google Maps API",
+    image: "/FleetTracking.png",
+    year: "2025",
   },
   {
     id: 6,
-    title: "LUMINA",
-    category: "AUTOMOTIVE",
-    tech: "Vue.js • Tailwind • Framer Motion",
-    image: "/Lumina-1.jpeg",
-    year: "2024",
+    title: "LUNARWAY TRAVELS",
+    category: "TRAVEL & TOURISM",
+    tech: "React • Tailwind CSS • Node.js",
+    image: "/LunarwayTravels.png",
+    year: "2025",
   },
   {
     id: 7,
-    title: "NEXMART",
-    category: "SALES MANAGEMENT",
-    tech: "Java Swing • MySQL",
-    image: "/NexMart -1.png",
-    year: "2023",
+    title: "MEDCONNECT",
+    category: "HEALTHCARE PLATFORM",
+    tech: "React • Spring Boot • MySQL",
+    image: "/E-Channeling-System.png",
+    year: "2025",
   },
   {
     id: 8,
-    title: "HOTELX",
-    category: "HOSPITALITY",
-    tech: "Java Swing • MySQL",
+    title: "PIZZAMANIA",
+    category: "MOBILE APP",
+    tech: "Java • SQLite • Firebase",
+    image: "/Pizza-Mania.png",
+    year: "2025",
+  },
+  {
+    id: 9,
+    title: "NATO MINI MART",
+    category: "POS & RETAIL SYSTEM",
+    tech: "React • Express • MongoDB",
+    image: "/NatoMiniMart.png",
+    year: "2024",
+  },
+  {
+    id: 10,
+    title: "LUMINA",
+    category: "AUTOMOTIVE",
+    tech: "Vue.js • Tailwind • Framer Motion",
+    image: "/Lumina.png",
+    year: "2025",
+  },
+  {
+    id: 11,
+    title: "ART GALLERY",
+    category: "ART WORK PORTFOLIO",
+    tech: "React • TypeScript ",
     image: "/Art-Gallery-01.jpeg",
-    year: "2023",
+    year: "2026",
   }
 ];
 
@@ -100,8 +125,8 @@ export default function App() {
     // Force preloader to always play for now so you can see the new animation
     // const played = sessionStorage.getItem('preloaderPlayed');
     // if (!played) {
-      setShowPreloader(true);
-      setPreloaderDone(false);
+    setShowPreloader(true);
+    setPreloaderDone(false);
     // }
   }, []);
 
@@ -150,6 +175,9 @@ export default function App() {
         onThemeToggle={toggleTheme}
         onNavigate={handleNavigate}
       />
+
+      {/* Floating Left Social Dock */}
+      <SocialDock onContactClick={() => setShowContact(true)} />
 
       {/* Main Content */}
       {preloaderDone && (

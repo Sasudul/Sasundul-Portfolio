@@ -77,7 +77,7 @@ export default function Footer({ onContactClick }: FooterProps) {
       {/* Bottom bar */}
       <div className="border-t px-6 md:px-12 py-6 flex flex-col md:flex-row justify-between items-center gap-4" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
         <span className="text-xs font-mono text-white/40 uppercase">{new Date().getFullYear()} © Edition</span>
-        <div className="flex gap-6">
+        <div className="flex gap-6 md:pr-36 items-center">
           <a href="https://www.linkedin.com/in/sasundul/" target="_blank" rel="noopener noreferrer" className="footer-link text-xs font-mono uppercase tracking-widest text-white/60 hover:text-white transition-colors">LinkedIn</a>
           <a href="https://github.com/Sasudul" target="_blank" rel="noopener noreferrer" className="footer-link text-xs font-mono uppercase tracking-widest text-white/60 hover:text-white transition-colors">GitHub</a>
           <a href="https://wa.me/+94740629020" target="_blank" rel="noopener noreferrer" className="footer-link text-xs font-mono uppercase tracking-widest text-white/60 hover:text-white transition-colors">WhatsApp</a>
