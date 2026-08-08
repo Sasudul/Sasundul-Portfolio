@@ -124,10 +124,7 @@ export async function* streamChat(
 
     const contentType = response.headers.get('content-type') || '';
 
-    // If endpoint returned HTML (e.g. index.html SPA rewrite), serverless endpoint wasn't reached
-    if (contentType.includes('text/html')) {
-      console.warn('[AI Service] /api/chat returned HTML index page instead of API response.');
-    } else if (response.ok && response.body) {
+    if (response.ok && response.body && !contentType.includes('text/html')) {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let fullResponse = '';
@@ -146,23 +143,27 @@ export async function* streamChat(
         conversation.addMessage('model', fullResponse);
         return; // Success via serverless proxy!
       }
-    } else {
-      // Parse server JSON error if returned
+    } else if (!contentType.includes('text/html')) {
+      // Read exact server error text
+      const resText = await response.text();
+      let errMessage = '';
       try {
-        const errJson = await response.json();
-        if (errJson?.error) {
-          yield `Server Error: ${errJson.error}`;
-          return;
-        }
-      } catch {}
+        const parsed = JSON.parse(resText);
+        errMessage = parsed.error || parsed.message || resText;
+      } catch {
+        errMessage = resText || `HTTP ${response.status}`;
+      }
+
+      yield `Serverless Endpoint Error (${response.status}): ${errMessage}`;
+      return; // Do not fall through to client fallback
     }
-  } catch (err) {
-    console.log('[AI Service] /api/chat fetch failed, trying client SDK fallback:', err);
+  } catch (err: any) {
+    console.warn('[AI Service] /api/chat fetch failed:', err);
   }
 
   // 2. FALLBACK TO DIRECT CLIENT SDK (for local standalone Vite dev)
   if (!API_KEY) {
-    yield "GEMINI_API_KEY is not configured in Vercel environment settings or local .env file.";
+    yield "API Key not found. Please check VITE_GEMINI_API_KEY in your local .env or GEMINI_API_KEY in Vercel settings.";
     return;
   }
 
@@ -202,7 +203,7 @@ export async function* streamChat(
     console.error('[AI Service Error]:', error);
   }
 
-  yield "Could not connect to AI. Please verify your GEMINI_API_KEY in Vercel Environment Variables and trigger a Redeploy.";
+  yield "Could not connect to AI. Please verify your GEMINI_API_KEY in Vercel settings and trigger a Redeploy.";
 }
 
 export function clearChatHistory(): void {

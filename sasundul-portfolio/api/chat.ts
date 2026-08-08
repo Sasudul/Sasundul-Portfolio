@@ -7,31 +7,27 @@ import { GoogleGenAI } from '@google/genai';
 import { SYSTEM_PROMPT } from '../components/aiPersona';
 
 export default async function handler(req: any, res: any) {
-  // Handle HTTP Method
   if (req.method !== 'POST') {
-    if (res.status) {
-      return res.status(405).json({ error: 'Method Not Allowed' });
-    }
+    if (res.status) return res.status(405).json({ error: 'Method Not Allowed' });
     return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405 });
   }
 
-  // 1. Read API key from Vercel Environment Variables
+  // Check all possible environment variable name variations
   const apiKey = (
     process.env.GEMINI_API_KEY ||
     process.env.VITE_GEMINI_API_KEY ||
+    process.env.GOOGLE_API_KEY ||
+    process.env.REACT_APP_GEMINI_API_KEY ||
     ''
   ).trim();
 
   if (!apiKey) {
-    const errorMsg = 'GEMINI_API_KEY environment variable is not configured on Vercel settings.';
-    if (res.status) {
-      return res.status(500).json({ error: errorMsg });
-    }
+    const errorMsg = 'GEMINI_API_KEY environment variable was not found in Vercel. Check Vercel Settings -> Environment Variables.';
+    if (res.status) return res.status(500).json({ error: errorMsg });
     return new Response(JSON.stringify({ error: errorMsg }), { status: 500 });
   }
 
   try {
-    // Handle both Node.js req.body and Fetch req.json()
     let body = req.body;
     if (typeof req.json === 'function') {
       try { body = await req.json(); } catch {}
@@ -76,15 +72,13 @@ export default async function handler(req: any, res: any) {
       throw lastError || new Error('All Gemini models failed');
     }
 
-    // Node Serverless Response (res.write)
+    // Node Serverless Response
     if (res.setHeader && typeof res.write === 'function') {
       res.setHeader('Content-Type', 'text/plain; charset=utf-8');
       res.setHeader('Cache-Control', 'no-cache');
 
       for await (const chunk of responseStream) {
-        if (chunk.text) {
-          res.write(chunk.text);
-        }
+        if (chunk.text) res.write(chunk.text);
       }
       return res.end();
     }
@@ -95,9 +89,7 @@ export default async function handler(req: any, res: any) {
       async start(controller) {
         try {
           for await (const chunk of responseStream) {
-            if (chunk.text) {
-              controller.enqueue(encoder.encode(chunk.text));
-            }
+            if (chunk.text) controller.enqueue(encoder.encode(chunk.text));
           }
           controller.close();
         } catch (e) {
