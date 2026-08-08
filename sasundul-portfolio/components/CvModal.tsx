@@ -26,7 +26,7 @@ export default function CvModal() {
       {/* Floating Action Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-8 right-8 z-40 px-6 py-3 bg-white text-black font-mono text-sm tracking-widest uppercase rounded-full shadow-2xl hover:scale-105 transition-transform"
+        className="fixed bottom-8 left-8 z-30 px-6 py-3 bg-white text-black font-mono text-sm tracking-widest uppercase rounded-full shadow-2xl hover:scale-105 transition-transform cursor-pointer"
       >
         Get CV
       </button>

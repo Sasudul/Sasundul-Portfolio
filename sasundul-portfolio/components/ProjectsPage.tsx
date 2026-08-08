@@ -4,16 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowLeft, ArrowUpRight, X } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import ProjectModal from './ProjectModal';
-
-gsap.registerPlugin(ScrollTrigger);
-
-interface Project {
-  id: number;
-  title: string;
-  category: string;
-  tech: string;
-  image: string;
-}
+import { Project } from '../App';
 
 interface ProjectsPageProps {
   projects: Project[];

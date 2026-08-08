@@ -38,7 +38,7 @@ export default function ContactForm({ onClose }: { onClose: () => void }) {
     setStatus('submitting');
 
     try {
-      const response = await fetch("https://formsubmit.co/ajax/sasudulpubg@gmail.com", {
+      const response = await fetch("https://formsubmit.co/ajax/sasuduln@gmail.com", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -57,12 +57,12 @@ export default function ContactForm({ onClose }: { onClose: () => void }) {
         setTimeout(handleClose, 3000);
       } else {
         setStatus('idle');
-        alert("Could not send message automatically. Please email sasudulpubg@gmail.com directly.");
+        alert("Could not send message automatically. Please email sasuduln@gmail.com directly.");
       }
     } catch (error) {
       console.error("Contact Form Error:", error);
       setStatus('idle');
-      alert("Could not send message automatically. Please email sasudulpubg@gmail.com directly.");
+      alert("Could not send message automatically. Please email sasuduln@gmail.com directly.");
     }
   };
 

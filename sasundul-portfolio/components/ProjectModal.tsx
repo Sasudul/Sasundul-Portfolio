@@ -1,19 +1,13 @@
-import React, { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { X, ArrowUpRight, Github } from 'lucide-react';
-
-interface Project {
-  id: number;
-  title: string;
-  category: string;
-  tech: string;
-  image: string;
-}
+import { X, ArrowUpRight, Github, Globe, Lock } from 'lucide-react';
+import { Project } from '../App';
 
 export default function ProjectModal({ project, onClose }: { project: Project, onClose: () => void }) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [toast, setToast] = useState<{ message: string; isLock?: boolean } | null>(null);
 
   useGSAP(() => {
     // Prevent scroll on body
@@ -62,11 +56,45 @@ export default function ProjectModal({ project, onClose }: { project: Project, o
     }, "-=0.2");
   };
 
+  const handleLiveClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (project.liveUrl && project.liveUrl !== '#' && project.liveUrl.startsWith('http')) {
+      window.open(project.liveUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      showToast('Live Preview Coming Soon', false);
+    }
+  };
+
+  const handleGithubClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (project.githubUrl && project.githubUrl !== '#' && project.githubUrl.startsWith('http')) {
+      window.open(project.githubUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      showToast('Private Repository — Coming Soon', true);
+    }
+  };
+
+  const showToast = (message: string, isLock = false) => {
+    setToast({ message, isLock });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  const hasLiveUrl = Boolean(project.liveUrl && project.liveUrl !== '#' && project.liveUrl.startsWith('http'));
+  const hasGithubUrl = Boolean(project.githubUrl && project.githubUrl !== '#' && project.githubUrl.startsWith('http'));
+
   return (
     <div 
       ref={overlayRef} 
       className="fixed inset-0 z-[100] bg-black/95 flex items-end md:items-center justify-center backdrop-blur-xl opacity-0 overflow-y-auto overflow-x-hidden pt-20 pb-0 md:py-10 px-0 md:px-6 cursor-auto"
     >
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-[200] px-6 py-3 bg-[#0d0d0d]/95 border border-white/20 text-white font-mono text-xs font-bold uppercase tracking-widest rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.9)] backdrop-blur-2xl flex items-center gap-3 animate-bounce">
+          {toast.isLock ? <Lock size={15} className="text-white/80" /> : <Globe size={15} className="text-white/80" />}
+          {toast.message}
+        </div>
+      )}
+
       <div 
         className="fixed inset-0 cursor-pointer"
         onClick={handleClose}
@@ -74,11 +102,11 @@ export default function ProjectModal({ project, onClose }: { project: Project, o
       
       <div 
         ref={containerRef}
-        className="relative w-full max-w-6xl bg-[#0a0a0a] md:border border-white/10 md:rounded-[40px] rounded-t-[40px] shadow-[0_0_80px_rgba(168,144,255,0.1)] z-10 flex flex-col md:flex-row overflow-hidden min-h-[80vh] md:min-h-0"
+        className="relative w-full max-w-6xl bg-[#0a0a0a] md:border border-white/10 md:rounded-[40px] rounded-t-[40px] shadow-2xl z-10 flex flex-col md:flex-row overflow-hidden min-h-[80vh] md:min-h-0"
       >
         <button 
           onClick={handleClose}
-          className="absolute top-6 right-6 text-white bg-white/10 hover:bg-white/20 p-4 rounded-full transition-all hover:rotate-90 z-50 backdrop-blur-md border border-white/10"
+          className="absolute top-6 right-6 text-white bg-white/10 hover:bg-white/20 p-4 rounded-full transition-all hover:rotate-90 z-50 backdrop-blur-md border border-white/10 cursor-pointer"
         >
           <X size={24} />
         </button>
@@ -93,22 +121,22 @@ export default function ProjectModal({ project, onClose }: { project: Project, o
         {/* Right Side: Details */}
         <div className="w-full md:w-1/2 p-8 md:p-16 flex flex-col justify-center bg-[#0a0a0a] relative z-10">
           <div className="modal-element">
-            <div className="text-white/60 text-xs uppercase font-bold tracking-widest mb-6 flex items-center gap-3">
-              <span className="w-8 h-[2px] bg-white/40"></span>
+            <div className="text-white/60 text-xs font-mono uppercase font-bold tracking-widest mb-6 flex items-center gap-3">
+              <span className="w-8 h-[1.5px] bg-white/40"></span>
               {project.category}
             </div>
             <h2 className="text-5xl md:text-7xl font-display font-bold uppercase tracking-tighter text-white mb-6 leading-[0.85]">{project.title}</h2>
           </div>
 
-          <div className="modal-element mb-12">
-            <p className="text-gray-400 text-lg md:text-xl font-medium leading-relaxed font-sans">
-              A comprehensive deep-dive into {project.title}. Designed with an emphasis on seamless user experience, high-performance architecture, and elegant visual aesthetics.
+          <div className="modal-element mb-8">
+            <p className="text-gray-300 text-base md:text-lg font-medium leading-relaxed font-sans">
+              {project.description || `A comprehensive deep-dive into ${project.title}. Designed with an emphasis on seamless user experience, high-performance architecture, and elegant visual aesthetics.`}
             </p>
           </div>
 
-          <div className="modal-element grid grid-cols-2 gap-8 mb-12 border-y border-white/10 py-8">
+          <div className="modal-element grid grid-cols-2 gap-8 mb-10 border-y border-white/10 py-6">
             <div>
-              <h4 className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-2">Technologies</h4>
+              <h4 className="text-gray-400 text-xs font-mono uppercase tracking-widest mb-3">Technologies</h4>
               <div className="flex flex-wrap gap-2">
                 {project.tech.split('•').map(t => (
                    <span key={t} className="text-xs text-white uppercase tracking-widest bg-white/5 px-3 py-1 rounded-full border border-white/10">{t.trim()}</span>
@@ -116,19 +144,38 @@ export default function ProjectModal({ project, onClose }: { project: Project, o
               </div>
             </div>
             <div>
-              <h4 className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-2">Role</h4>
-              <p className="text-white font-mono text-sm uppercase">Lead Developer / Designer</p>
+              <h4 className="text-gray-400 text-xs font-mono uppercase tracking-widest mb-3">Year & Role</h4>
+              <p className="text-white font-mono text-sm uppercase">{project.year || '2025'} • Lead Developer</p>
             </div>
           </div>
 
-          <div className="modal-element flex flex-wrap gap-4 mt-auto">
-            <a href="#" className="flex-1 py-5 bg-[#f1f1f1] text-black uppercase font-bold tracking-widest hover:bg-white hover:text-black transition-colors duration-300 flex items-center justify-center gap-4 rounded-full">
-              Live Preview <ArrowUpRight size={20} />
-            </a>
-            <a href="#" className="w-16 h-16 border border-white/20 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-black transition-all">
-              <Github size={24} />
-            </a>
+          {/* Action Buttons */}
+          <div className="modal-element flex items-center gap-4 mt-auto">
+            <button
+              onClick={handleLiveClick}
+              className={`flex-1 py-4 px-6 uppercase font-bold font-mono text-xs tracking-widest transition-all duration-300 flex items-center justify-center gap-3 rounded-full cursor-pointer ${
+                hasLiveUrl 
+                  ? 'bg-white text-black hover:bg-white/90 shadow-lg' 
+                  : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+              }`}
+            >
+              <span>{hasLiveUrl ? 'Live Preview' : 'Live Preview (Coming Soon)'}</span>
+              <ArrowUpRight size={18} />
+            </button>
+
+            <button
+              onClick={handleGithubClick}
+              className={`w-14 h-14 rounded-full border flex items-center justify-center transition-all cursor-pointer ${
+                hasGithubUrl 
+                  ? 'border-white/30 text-white hover:bg-white hover:text-black' 
+                  : 'border-white/15 text-white/50 hover:border-white/40 hover:text-white bg-white/5'
+              }`}
+              title={hasGithubUrl ? 'View Source Code on GitHub' : 'Private Repository / Coming Soon'}
+            >
+              <Github size={22} />
+            </button>
           </div>
+
         </div>
       </div>
     </div>

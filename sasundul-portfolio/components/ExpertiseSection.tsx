@@ -57,7 +57,7 @@ export default function ExpertiseSection() {
       trigger: section,
       pin: true,
       start: 'top top',
-      end: '+=40%',
+      end: '+=100%',
       scrub: 0.1,
       onUpdate: (self) => {
         const progress = self.progress;
@@ -97,7 +97,7 @@ export default function ExpertiseSection() {
         deltaAccumulator = 0;
       }, 300);
 
-      const THRESHOLD = 160;
+      const THRESHOLD = 1000;
 
       // Scrolling Down
       if (deltaAccumulator >= THRESHOLD && activeIndexRef.current < EXPERTISE.length - 1) {
@@ -136,22 +136,22 @@ export default function ExpertiseSection() {
   const activeItem = EXPERTISE[activeIndex];
 
   return (
-    <section 
-      ref={sectionRef} 
-      id="expertise" 
+    <section
+      ref={sectionRef}
+      id="expertise"
       className="relative min-h-screen h-screen flex flex-col justify-between py-8 px-6 md:px-16 bg-[#050505] text-white overflow-hidden"
     >
       {/* Background Ambient Pixel Blast */}
-      <PixelBlast 
-        variant="circle" 
-        color="#707070" 
+      <PixelBlast
+        variant="circle"
+        color="#707070"
         pixelSize={3}
         patternDensity={1.2}
         patternScale={2.0}
-        liquid={true} 
+        liquid={true}
         liquidStrength={0.08}
         liquidRadius={1.0}
-        enableRipples={true} 
+        enableRipples={true}
         rippleIntensityScale={1.2}
         rippleThickness={0.1}
         rippleSpeed={0.3}
@@ -159,7 +159,7 @@ export default function ExpertiseSection() {
       />
 
       <div className="max-w-7xl mx-auto w-full relative z-10 flex flex-col justify-between h-full py-4">
-        
+
         {/* Header bar */}
         <div className="border-b border-white/10 pb-5 flex items-center justify-between">
           <div>
@@ -182,7 +182,7 @@ export default function ExpertiseSection() {
 
         {/* Main Showcase Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center my-auto">
-          
+
           {/* Left Column: Service Selector Tabs */}
           <div className="lg:col-span-5 flex flex-col gap-4">
             {EXPERTISE.map((item, idx) => {
@@ -194,11 +194,10 @@ export default function ExpertiseSection() {
                     activeIndexRef.current = idx;
                     setActiveIndex(idx);
                   }}
-                  className={`group text-left p-5 md:p-6 rounded-2xl border transition-all duration-300 cursor-pointer flex items-center justify-between ${
-                    isActive 
-                      ? 'bg-white/10 border-white/30 shadow-[0_10px_30px_rgba(255,255,255,0.05)] backdrop-blur-xl translate-x-2' 
-                      : 'bg-white/[0.02] border-white/5 opacity-50 hover:opacity-80 hover:border-white/15'
-                  }`}
+                  className={`group text-left p-5 md:p-6 rounded-2xl border transition-all duration-300 cursor-pointer flex items-center justify-between ${isActive
+                    ? 'bg-white/10 border-white/30 shadow-[0_10px_30px_rgba(255,255,255,0.05)] backdrop-blur-xl translate-x-2'
+                    : 'bg-white/[0.02] border-white/5 opacity-50 hover:opacity-80 hover:border-white/15'
+                    }`}
                 >
                   <div className="flex items-center gap-4">
                     <span className={`font-mono text-sm font-bold transition-colors ${isActive ? 'text-white' : 'text-white/40'}`}>
@@ -212,9 +211,8 @@ export default function ExpertiseSection() {
                     </div>
                   </div>
 
-                  <div className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${
-                    isActive ? 'border-white bg-white text-black rotate-45' : 'border-white/20 text-white/40 group-hover:border-white/50'
-                  }`}>
+                  <div className={`w-8 h-8 rounded-full border flex items-center justify-center transition-all ${isActive ? 'border-white bg-white text-black rotate-45' : 'border-white/20 text-white/40 group-hover:border-white/50'
+                    }`}>
                     <ArrowUpRight size={16} />
                   </div>
                 </button>
@@ -227,13 +225,12 @@ export default function ExpertiseSection() {
             {EXPERTISE.map((item, idx) => {
               const isActive = activeIndex === idx;
               return (
-                <div 
+                <div
                   key={item.number}
-                  className={`exp-card-item absolute inset-0 p-6 sm:p-8 md:p-10 flex flex-col justify-between transition-all duration-500 ease-out ${
-                    isActive 
-                      ? 'opacity-100 scale-100 pointer-events-auto z-10 translate-y-0' 
-                      : 'opacity-0 scale-95 pointer-events-none z-0 translate-y-4'
-                  }`}
+                  className={`exp-card-item absolute inset-0 p-6 sm:p-8 md:p-10 flex flex-col justify-between transition-all duration-500 ease-out ${isActive
+                    ? 'opacity-100 scale-100 pointer-events-auto z-10 translate-y-0'
+                    : 'opacity-0 scale-95 pointer-events-none z-0 translate-y-4'
+                    }`}
                 >
                   <div>
                     <div className="mb-2">
@@ -283,7 +280,7 @@ export default function ExpertiseSection() {
         {/* Footer Progress Bar (White Line) */}
         <div className="relative z-10 w-full pt-4">
           <div className="w-full h-[2px] bg-white/10 rounded-full overflow-hidden">
-            <div 
+            <div
               className="h-full bg-white transition-all duration-500 rounded-full"
               style={{ width: `${((activeIndex + 1) / EXPERTISE.length) * 100}%` }}
             />

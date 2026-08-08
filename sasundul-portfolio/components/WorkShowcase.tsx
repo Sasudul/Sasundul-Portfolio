@@ -3,17 +3,7 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ExternalLink } from 'lucide-react';
-
-gsap.registerPlugin(ScrollTrigger);
-
-interface Project {
-  id: number;
-  title: string;
-  category: string;
-  tech: string;
-  image: string;
-  year?: string;
-}
+import { Project } from '../App';
 
 interface WorkShowcaseProps {
   projects: Project[];
