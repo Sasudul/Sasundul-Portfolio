@@ -1,6 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════
 // AI SERVICE — Secure Hybrid Transport
-// Primary: /api/chat (Serverless Edge Proxy — 100% Secure, Key Hidden)
+// Primary: /api/chat (Serverless Proxy — 100% Secure, Key Hidden)
 // Secondary: Direct Client SDK (Local Vite Dev Fallback)
 // ═══════════════════════════════════════════════════════════════════
 
@@ -19,7 +19,6 @@ const FALLBACK_MODELS = ['gemini-1.5-flash', 'gemini-2.5-flash'];
 const MAX_INPUT_LENGTH = 500;
 const MAX_HISTORY_LENGTH = 30;
 
-// ── Rate Limiter ──
 class RateLimiter {
   private timestamps: number[] = [];
   private readonly maxPerMinute = 15;
@@ -47,7 +46,6 @@ class RateLimiter {
   }
 }
 
-// ── Input Sanitizer ──
 function sanitizeInput(input: string): string {
   return input
     .replace(/<[^>]*>/g, '')
@@ -57,7 +55,6 @@ function sanitizeInput(input: string): string {
     .slice(0, MAX_INPUT_LENGTH);
 }
 
-// ── History Manager ──
 class ConversationManager {
   private history: ChatMessage[] = [];
 
@@ -96,7 +93,6 @@ function getClient(): GoogleGenAI {
   return aiClient;
 }
 
-// ── Main Streaming Chat Function ──
 export async function* streamChat(
   userMessage: string
 ): AsyncGenerator<string, void, unknown> {
@@ -126,7 +122,12 @@ export async function* streamChat(
       }),
     });
 
-    if (response.ok && response.body) {
+    const contentType = response.headers.get('content-type') || '';
+
+    // If endpoint returned HTML (e.g. index.html SPA rewrite), serverless endpoint wasn't reached
+    if (contentType.includes('text/html')) {
+      console.warn('[AI Service] /api/chat returned HTML index page instead of API response.');
+    } else if (response.ok && response.body) {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let fullResponse = '';
@@ -145,14 +146,23 @@ export async function* streamChat(
         conversation.addMessage('model', fullResponse);
         return; // Success via serverless proxy!
       }
+    } else {
+      // Parse server JSON error if returned
+      try {
+        const errJson = await response.json();
+        if (errJson?.error) {
+          yield `Server Error: ${errJson.error}`;
+          return;
+        }
+      } catch {}
     }
   } catch (err) {
-    console.log('[AI Service] /api/chat not available or failed, trying local fallback:', err);
+    console.log('[AI Service] /api/chat fetch failed, trying client SDK fallback:', err);
   }
 
   // 2. FALLBACK TO DIRECT CLIENT SDK (for local standalone Vite dev)
   if (!API_KEY) {
-    yield "GEMINI_API_KEY is not configured on Vercel environment variables or .env file.";
+    yield "GEMINI_API_KEY is not configured in Vercel environment settings or local .env file.";
     return;
   }
 
@@ -192,7 +202,7 @@ export async function* streamChat(
     console.error('[AI Service Error]:', error);
   }
 
-  yield "Could not connect to AI. Please verify your GEMINI_API_KEY in Vercel environment settings.";
+  yield "Could not connect to AI. Please verify your GEMINI_API_KEY in Vercel Environment Variables and trigger a Redeploy.";
 }
 
 export function clearChatHistory(): void {
@@ -200,5 +210,5 @@ export function clearChatHistory(): void {
 }
 
 export function isConfigured(): boolean {
-  return true; // Proxy handles config check on server
+  return true;
 }

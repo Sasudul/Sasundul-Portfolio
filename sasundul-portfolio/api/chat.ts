@@ -1,46 +1,53 @@
 // ═══════════════════════════════════════════════════════════════════
-// VERCEL EDGE SERVERLESS FUNCTION — /api/chat
+// VERCEL SERVERLESS FUNCTION — /api/chat
 // Securely proxies Gemini API requests. Hides API key from browser.
 // ═══════════════════════════════════════════════════════════════════
 
 import { GoogleGenAI } from '@google/genai';
 import { SYSTEM_PROMPT } from '../components/aiPersona';
 
-export const config = {
-  runtime: 'edge',
-};
-
-export default async function handler(req: Request) {
+export default async function handler(req: any, res: any) {
+  // Handle HTTP Method
   if (req.method !== 'POST') {
-    return new Response(JSON.stringify({ error: 'Method Not Allowed' }), {
-      status: 405,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    if (res.status) {
+      return res.status(405).json({ error: 'Method Not Allowed' });
+    }
+    return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { status: 405 });
   }
 
-  // 1. Read API key securely from server-side environment variables
-  const apiKey = (process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || '').trim();
+  // 1. Read API key from Vercel Environment Variables
+  const apiKey = (
+    process.env.GEMINI_API_KEY ||
+    process.env.VITE_GEMINI_API_KEY ||
+    ''
+  ).trim();
 
   if (!apiKey) {
-    return new Response(
-      JSON.stringify({ error: 'GEMINI_API_KEY is not set in Vercel environment variables.' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    const errorMsg = 'GEMINI_API_KEY environment variable is not configured on Vercel settings.';
+    if (res.status) {
+      return res.status(500).json({ error: errorMsg });
+    }
+    return new Response(JSON.stringify({ error: errorMsg }), { status: 500 });
   }
 
   try {
-    const { message, contents } = await req.json();
+    // Handle both Node.js req.body and Fetch req.json()
+    let body = req.body;
+    if (typeof req.json === 'function') {
+      try { body = await req.json(); } catch {}
+    } else if (typeof body === 'string') {
+      try { body = JSON.parse(body); } catch {}
+    }
+
+    const { message, contents } = body || {};
 
     if (!message && (!contents || contents.length === 0)) {
-      return new Response(JSON.stringify({ error: 'Message payload missing' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const err = 'Message payload missing';
+      if (res.status) return res.status(400).json({ error: err });
+      return new Response(JSON.stringify({ error: err }), { status: 400 });
     }
 
     const ai = new GoogleGenAI({ apiKey });
-
-    // Model fallback chain: gemini-2.0-flash -> gemini-1.5-flash -> gemini-2.5-flash
     const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.5-flash'];
     let responseStream: any = null;
     let lastError: any = null;
@@ -69,15 +76,27 @@ export default async function handler(req: Request) {
       throw lastError || new Error('All Gemini models failed');
     }
 
-    // Stream text back to the browser using ReadableStream
+    // Node Serverless Response (res.write)
+    if (res.setHeader && typeof res.write === 'function') {
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-cache');
+
+      for await (const chunk of responseStream) {
+        if (chunk.text) {
+          res.write(chunk.text);
+        }
+      }
+      return res.end();
+    }
+
+    // Edge ReadableStream Response
     const encoder = new TextEncoder();
     const readable = new ReadableStream({
       async start(controller) {
         try {
           for await (const chunk of responseStream) {
-            const text = chunk.text;
-            if (text) {
-              controller.enqueue(encoder.encode(text));
+            if (chunk.text) {
+              controller.enqueue(encoder.encode(chunk.text));
             }
           }
           controller.close();
@@ -95,9 +114,10 @@ export default async function handler(req: Request) {
     });
   } catch (error: any) {
     console.error('[Vercel Serverless AI Error]:', error);
-    return new Response(
-      JSON.stringify({ error: error?.message || 'Internal Server Error' }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } }
-    );
+    const errorText = error?.message || 'Internal Server Error';
+    if (res.status && !res.headersSent) {
+      return res.status(500).json({ error: errorText });
+    }
+    return new Response(JSON.stringify({ error: errorText }), { status: 500 });
   }
 }
