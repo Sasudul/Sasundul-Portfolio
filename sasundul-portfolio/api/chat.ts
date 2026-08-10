@@ -1,6 +1,7 @@
 // ═══════════════════════════════════════════════════════════════════
 // VERCEL EDGE FUNCTION — /api/chat
 // Self-contained, ultra-fast serverless proxy for Gemini API
+// With Multi-Model Fallback & Friendly Quota Handling
 // ═══════════════════════════════════════════════════════════════════
 
 import { GoogleGenAI } from '@google/genai';
@@ -82,14 +83,15 @@ export default async function handler(req: Request) {
 
     const ai = new GoogleGenAI({ apiKey });
     const modelsToTry = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-2.5-flash'];
-    let responseStream: any = null;
-    let lastError: any = null;
-
     const apiContents = contents || [{ role: 'user', parts: [{ text: message }] }];
 
+    let activeStream: any = null;
+    let lastError: any = null;
+
+    // Try models one by one
     for (const modelName of modelsToTry) {
       try {
-        responseStream = await ai.models.generateContentStream({
+        const stream = await ai.models.generateContentStream({
           model: modelName,
           contents: apiContents,
           config: {
@@ -99,22 +101,46 @@ export default async function handler(req: Request) {
             maxOutputTokens: 1024,
           },
         });
-        if (responseStream) break;
-      } catch (err) {
+
+        // Test reading first chunk to verify model quota isn't exhausted
+        const iterator = stream[Symbol.asyncIterator]();
+        const first = await iterator.next();
+        
+        if (!first.done && first.value) {
+          // Re-wrap stream generator with first chunk + rest
+          activeStream = (async function* () {
+            yield first.value;
+            while (true) {
+              const res = await iterator.next();
+              if (res.done) break;
+              yield res.value;
+            }
+          })();
+          break; // Successfully found working model!
+        }
+      } catch (err: any) {
+        console.warn(`[Vercel Edge] Model ${modelName} failed/quota:`, err?.message || err);
         lastError = err;
       }
     }
 
-    if (!responseStream) {
-      throw lastError || new Error('All Gemini models failed');
+    if (!activeStream) {
+      const errStr = String(lastError?.message || lastError || '');
+      if (errStr.includes('429') || errStr.includes('quota') || errStr.includes('RESOURCE_EXHAUSTED')) {
+        return new Response(
+          JSON.stringify({ error: "Google's free AI quota is cooling down for a few seconds. Try again in 15 seconds! 😄" }),
+          { status: 429, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+      throw lastError || new Error('All Gemini AI models are currently busy.');
     }
 
     const encoder = new TextEncoder();
     const readable = new ReadableStream({
       async start(controller) {
         try {
-          for await (const chunk of responseStream) {
-            if (chunk.text) {
+          for await (const chunk of activeStream) {
+            if (chunk?.text) {
               controller.enqueue(encoder.encode(chunk.text));
             }
           }
@@ -133,8 +159,15 @@ export default async function handler(req: Request) {
     });
   } catch (error: any) {
     console.error('[Vercel Edge Function Error]:', error);
+    const errStr = String(error?.message || error || '');
+    let cleanMessage = 'Internal Server Error';
+
+    if (errStr.includes('429') || errStr.includes('quota') || errStr.includes('RESOURCE_EXHAUSTED')) {
+      cleanMessage = "Google's free AI quota is cooling down for a few seconds. Try again in 15 seconds! 😄";
+    }
+
     return new Response(
-      JSON.stringify({ error: error?.message || 'Server Error' }),
+      JSON.stringify({ error: cleanMessage }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
