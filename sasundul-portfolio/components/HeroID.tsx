@@ -136,31 +136,49 @@ export default function HeroID() {
     });
   }, []);
 
-  // Mouse parallax
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!sectionRef.current) return;
-    const rect = sectionRef.current.getBoundingClientRect();
-    const xPos = (e.clientX - rect.left) / rect.width - 0.5;
-    const yPos = (e.clientY - rect.top) / rect.height - 0.5;
+  const rafRef = useRef<number | null>(null);
 
-    gsap.to(cardRef.current, {
-      x: xPos * 30,
-      y: -10 + yPos * 20,
-      rotateY: xPos * 8,
-      rotateX: -yPos * 8,
-      duration: 1,
-      ease: 'power3.out',
-      transformPerspective: 1200,
+  // Mouse parallax with rAF throttling for 60/120fps performance
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!sectionRef.current || !cardRef.current) return;
+    const clientX = e.clientX;
+    const clientY = e.clientY;
+
+    if (rafRef.current) return;
+
+    rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = null;
+      if (!sectionRef.current || !cardRef.current) return;
+      const rect = sectionRef.current.getBoundingClientRect();
+      const xPos = (clientX - rect.left) / rect.width - 0.5;
+      const yPos = (clientY - rect.top) / rect.height - 0.5;
+
+      gsap.to(cardRef.current, {
+        x: xPos * 30,
+        y: -10 + yPos * 20,
+        rotateY: xPos * 8,
+        rotateX: -yPos * 8,
+        duration: 0.8,
+        ease: 'power2.out',
+        transformPerspective: 1200,
+        overwrite: 'auto',
+      });
     });
   };
 
   const handleMouseLeave = () => {
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
+
     gsap.to(cardRef.current, {
       x: 0,
       rotateY: 0,
       rotateX: 0,
       duration: 1.5,
       ease: 'elastic.out(1, 0.5)',
+      overwrite: 'auto',
     });
 
     // Retract shapes when cursor leaves the hero section

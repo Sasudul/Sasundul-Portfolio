@@ -332,6 +332,19 @@ const PixelBlast = ({
   const threeRef = useRef<any>(null);
   const prevConfigRef = useRef<any>(null);
 
+  // IntersectionObserver to pause WebGL canvas when off-screen
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      visibilityRef.current.visible = entry.isIntersecting;
+    }, { threshold: 0.01 });
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, []);
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;

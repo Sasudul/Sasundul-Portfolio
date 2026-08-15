@@ -6,7 +6,6 @@ export default function CustomCursor() {
 
   useEffect(() => {
     if (!dotRef.current) return;
-    // Check for touch device
     if (window.matchMedia('(hover: none)').matches) return;
 
     const xTo = gsap.quickTo(dotRef.current, 'x', { duration: 0.15, ease: 'power3' });
@@ -19,31 +18,28 @@ export default function CustomCursor() {
 
     const interactiveSelector = 'a, button, [role="button"], .cursor-pointer, input, textarea, .work__thumbnail';
 
-    const onEnterInteractive = () => {
-      gsap.to(dotRef.current, { scale: 3, opacity: 0.5, duration: 0.3, ease: 'power2.out' });
+    const onMouseOver = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && target.closest(interactiveSelector)) {
+        gsap.to(dotRef.current, { scale: 3, opacity: 0.5, duration: 0.3, ease: 'power2.out' });
+      }
     };
 
-    const onLeaveInteractive = () => {
-      gsap.to(dotRef.current, { scale: 1, opacity: 1, duration: 0.3, ease: 'power2.out' });
+    const onMouseOut = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && target.closest(interactiveSelector)) {
+        gsap.to(dotRef.current, { scale: 1, opacity: 1, duration: 0.3, ease: 'power2.out' });
+      }
     };
 
-    window.addEventListener('mousemove', onMove);
-
-    // Use MutationObserver-friendly approach: delegate
-    const addListeners = () => {
-      document.querySelectorAll(interactiveSelector).forEach(el => {
-        el.addEventListener('mouseenter', onEnterInteractive);
-        el.addEventListener('mouseleave', onLeaveInteractive);
-      });
-    };
-
-    addListeners();
-    const observer = new MutationObserver(addListeners);
-    observer.observe(document.body, { childList: true, subtree: true });
+    window.addEventListener('mousemove', onMove, { passive: true });
+    document.addEventListener('mouseover', onMouseOver, { passive: true });
+    document.addEventListener('mouseout', onMouseOut, { passive: true });
 
     return () => {
       window.removeEventListener('mousemove', onMove);
-      observer.disconnect();
+      document.removeEventListener('mouseover', onMouseOver);
+      document.removeEventListener('mouseout', onMouseOut);
     };
   }, []);
 

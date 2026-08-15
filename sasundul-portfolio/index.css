@@ -58,6 +58,16 @@
     transition: background-color 0.5s var(--ease-primary), color 0.5s var(--ease-primary);
   }
 
+  /* Hardware Acceleration & Layout Containment for smooth 60fps scrolling */
+  section {
+    contain: layout style;
+  }
+
+  .gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Oswald', sans-serif;
     letter-spacing: -0.02em;

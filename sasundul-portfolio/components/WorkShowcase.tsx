@@ -92,14 +92,14 @@ export default function WorkShowcase({ projects, onProjectClick }: WorkShowcaseP
 
       {/* Dynamic Ambient Blur Background (Fills screen edge-to-edge with project brand glow) */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        {projects.map((p, i) => (
-          <img
-            key={`ambient-${p.id}`}
-            src={p.image}
-            alt=""
-            className={`absolute inset-0 w-full h-full object-cover filter blur-[100px] scale-125 transition-opacity duration-1000 ${i === activeIndex ? 'opacity-35' : 'opacity-0'}`}
-          />
-        ))}
+        <img
+          key={`ambient-${activeProject.id}`}
+          src={activeProject.image}
+          alt=""
+          decoding="async"
+          loading="lazy"
+          className="absolute inset-0 w-full h-full object-cover filter blur-[100px] scale-125 transition-opacity duration-700 opacity-35"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/70 via-transparent to-[#050505]/90" />
       </div>
 
@@ -134,14 +134,13 @@ export default function WorkShowcase({ projects, onProjectClick }: WorkShowcaseP
           onClick={() => onProjectClick(activeProject)}
           className="work-showcase-card group relative w-full max-w-6xl aspect-[16/9] max-h-[62vh] rounded-2xl md:rounded-3xl overflow-hidden border border-white/15 bg-black/60 shadow-[0_20px_60px_rgba(0,0,0,0.6)] backdrop-blur-md cursor-pointer transition-all duration-500 hover:border-white/40 hover:shadow-[0_25px_80px_rgba(255,255,255,0.08)] flex items-center justify-center p-2 md:p-4"
         >
-          {projects.map((p, i) => (
-            <img
-              key={p.id}
-              src={p.image}
-              alt={p.title}
-              className={`w-full h-full object-contain transition-all duration-700 rounded-xl ${i === activeIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-98 absolute inset-0'}`}
-            />
-          ))}
+          <img
+            key={activeProject.id}
+            src={activeProject.image}
+            alt={activeProject.title}
+            decoding="async"
+            className="w-full h-full object-contain transition-all duration-500 rounded-xl opacity-100 scale-100"
+          />
 
           {/* Hover Hint Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-6 pointer-events-none">

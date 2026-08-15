@@ -5,7 +5,6 @@ import { useRef } from 'react';
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* ─── Split text into individual letters with alternating reveal direction ─── */
 function SplitLetters({ text, startIndex = 0 }: { text: string; startIndex?: number }) {
   return (
     <>
@@ -15,7 +14,7 @@ function SplitLetters({ text, startIndex = 0 }: { text: string; startIndex?: num
         const from = (startIndex + i) % 2 === 0 ? 'up' : 'down';
         return (
           <span key={i} className="inline-block overflow-hidden" style={{ verticalAlign: 'bottom', paddingBottom: '0.1em', marginBottom: '-0.1em' }}>
-            <span className="h-word inline-block" data-from={from}>
+            <span className="h-word inline-block" data-from={from} style={{ color: 'var(--text)' }}>
               {char}
             </span>
           </span>
@@ -75,29 +74,29 @@ function HeroI() {
         <path
           className="hero-stem"
           d="M 50 88 C 36 72 18 76 16 58 C 14 40 28 30 20 18 C 14 8 4 10 6 2"
-          stroke={G} strokeWidth="1.7" strokeLinecap="round"
+          stroke={G} strokeWidth="4.5" strokeLinecap="round"
         />
-        <path className="hero-stem" d="M 18 54 C 10 50 4 54 2 46" stroke={GM} strokeWidth="1.1" strokeLinecap="round" />
+        <path className="hero-stem" d="M 18 54 C 10 50 4 54 2 46" stroke={GM} strokeWidth="2.2" strokeLinecap="round" />
 
-        <Leaf cx={18} cy={64} angle={-140} fill={G} s={9} />
-        <Leaf cx={19} cy={36} angle={-160} fill={GM} s={8} op={0.85} />
-        <Leaf cx={8} cy={12} angle={-120} fill={GM} s={7} op={0.7} />
-        <Dot cx={2} cy={46} r={2.8} fill={GD} />
-        <Dot cx={5} cy={20} r={2.2} fill={GD} />
+        <Leaf cx={18} cy={64} angle={-140} fill={G} s={11} />
+        <Leaf cx={19} cy={36} angle={-160} fill={GM} s={10} op={0.9} />
+        <Leaf cx={8} cy={12} angle={-120} fill={GM} s={9} op={0.8} />
+        <Dot cx={2} cy={46} r={3.5} fill={GD} />
+        <Dot cx={5} cy={20} r={3} fill={GD} />
 
         {/* right vine dropping down */}
         <path
           className="hero-stem"
           d="M 50 12 C 64 28 80 24 82 42 C 84 58 70 68 80 82 C 86 92 96 88 94 98"
-          stroke={P} strokeWidth="1.7" strokeLinecap="round"
+          stroke={P} strokeWidth="3.5" strokeLinecap="round"
         />
-        <path className="hero-stem" d="M 82 46 C 90 50 96 46 98 54" stroke={P} strokeWidth="1.1" strokeLinecap="round" />
+        <path className="hero-stem" d="M 82 46 C 90 50 96 46 98 54" stroke={P} strokeWidth="2.2" strokeLinecap="round" />
 
-        <Leaf cx={82} cy={36} angle={40} fill={P} s={9} />
-        <Leaf cx={76} cy={68} angle={20} fill={P} s={8} op={0.85} />
-        <Leaf cx={92} cy={92} angle={60} fill={P} s={7} op={0.7} />
-        <Dot cx={98} cy={54} r={2.8} fill={PD} />
-        <Dot cx={96} cy={78} r={2.2} fill={PD} />
+        <Leaf cx={82} cy={36} angle={40} fill={P} s={11} />
+        <Leaf cx={76} cy={68} angle={20} fill={P} s={10} op={0.9} />
+        <Leaf cx={92} cy={92} angle={60} fill={P} s={9} op={0.8} />
+        <Dot cx={98} cy={54} r={3.5} fill={PD} />
+        <Dot cx={96} cy={78} r={3} fill={PD} />
       </svg>
     </span>
   );
@@ -106,19 +105,15 @@ function HeroI() {
 function IntroVine() {
   return (
     <>
-      <svg className="absolute pointer-events-none z-[0]" style={{ top: '-80%', left: '-20%', width: '150%', height: '260%', overflow: 'visible', filter: 'blur(1.5px)' }} viewBox="0 0 600 200" fill="none">
+      <svg className="absolute pointer-events-none z-0" style={{ top: '-40%', left: '-10%', width: '130%', height: '180%', overflow: 'visible', opacity: 0.85 }} viewBox="0 0 600 200" fill="none">
         <defs>
-          <linearGradient id="vine-gradient" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
-            <stop stopColor="#4CAF50" />
-            <stop offset="1" stopColor="#9C27B0" />
+          <linearGradient id="vine-gradient-1" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#4CAF50" />
+            <stop offset="50%" stopColor="#81C784" />
+            <stop offset="100%" stopColor="#9C27B0" />
           </linearGradient>
         </defs>
-        {/* DNA Helix 1 (Background) */}
-        <path className="vine-stem opacity-0" d="M -50 100 C 50 0, 150 0, 250 100 C 350 200, 450 200, 550 100 C 600 50, 650 50, 700 100" stroke="url(#vine-gradient)" strokeWidth="1.5" strokeOpacity="0.35" strokeLinecap="round" />
-      </svg>
-      <svg className="absolute pointer-events-none z-[20]" style={{ top: '-80%', left: '-20%', width: '150%', height: '260%', overflow: 'visible', filter: 'drop-shadow(0px 15px 15px rgba(0,0,0,0.9))' }} viewBox="0 0 600 200" fill="none">
-        {/* DNA Helix 2 (Foreground) */}
-        <path className="vine-stem opacity-0" d="M -50 100 C 50 200, 150 200, 250 100 C 350 0, 450 0, 550 100 C 600 150, 650 150, 700 100" stroke="url(#vine-gradient)" strokeWidth="4" strokeLinecap="round" />
+        <path className="vine-stem" d="M -20 160 C 80 40, 180 180, 280 60 C 380 -40, 480 140, 580 40" stroke="url(#vine-gradient-1)" strokeWidth="4.5" strokeLinecap="round" />
       </svg>
     </>
   );
@@ -127,11 +122,14 @@ function IntroVine() {
 function DesignerVine() {
   return (
     <>
-      <svg className="absolute pointer-events-none z-[0]" style={{ top: '-100%', left: '-30%', width: '180%', height: '300%', overflow: 'visible', filter: 'blur(1.5px)' }} viewBox="0 0 500 200" fill="none">
-        <path className="vine-stem opacity-0" d="M -50 100 C 50 -20, 150 -20, 250 100 C 350 220, 450 220, 550 100" stroke="url(#vine-gradient)" strokeWidth="1.5" strokeOpacity="0.35" strokeLinecap="round" />
-      </svg>
-      <svg className="absolute pointer-events-none z-[20]" style={{ top: '-100%', left: '-30%', width: '180%', height: '300%', overflow: 'visible', filter: 'drop-shadow(0px 15px 15px rgba(0,0,0,0.9))' }} viewBox="0 0 500 200" fill="none">
-        <path className="vine-stem opacity-0" d="M -50 100 C 50 220, 150 220, 250 100 C 350 -20, 450 -20, 550 100" stroke="url(#vine-gradient)" strokeWidth="4" strokeLinecap="round" />
+      <svg className="absolute pointer-events-none z-0" style={{ top: '-40%', left: '-15%', width: '140%', height: '180%', overflow: 'visible', opacity: 0.85 }} viewBox="0 0 500 200" fill="none">
+        <defs>
+          <linearGradient id="vine-gradient-2" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#81C784" />
+            <stop offset="100%" stopColor="#AB47BC" />
+          </linearGradient>
+        </defs>
+        <path className="vine-stem" d="M -30 40 C 70 170, 170 10, 270 150 C 370 290, 470 30, 530 140" stroke="url(#vine-gradient-2)" strokeWidth="4.5" strokeLinecap="round" />
       </svg>
     </>
   );
@@ -140,11 +138,14 @@ function DesignerVine() {
 function DeveloperVine() {
   return (
     <>
-      <svg className="absolute pointer-events-none z-[0]" style={{ top: '-90%', left: '-20%', width: '160%', height: '280%', overflow: 'visible', filter: 'blur(1.5px)' }} viewBox="0 0 700 200" fill="none">
-        <path className="vine-stem opacity-0" d="M -50 100 C 100 0, 250 0, 400 100 C 550 200, 700 200, 850 100" stroke="url(#vine-gradient)" strokeWidth="1.5" strokeOpacity="0.35" strokeLinecap="round" />
-      </svg>
-      <svg className="absolute pointer-events-none z-[20]" style={{ top: '-90%', left: '-20%', width: '160%', height: '280%', overflow: 'visible', filter: 'drop-shadow(0px 15px 15px rgba(0,0,0,0.9))' }} viewBox="0 0 700 200" fill="none">
-        <path className="vine-stem opacity-0" d="M -50 100 C 100 200, 250 200, 400 100 C 550 0, 700 0, 850 100" stroke="url(#vine-gradient)" strokeWidth="4" strokeLinecap="round" />
+      <svg className="absolute pointer-events-none z-0" style={{ top: '-40%', left: '-10%', width: '130%', height: '180%', overflow: 'visible', opacity: 0.85 }} viewBox="0 0 700 200" fill="none">
+        <defs>
+          <linearGradient id="vine-gradient-3" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#4CAF50" />
+            <stop offset="100%" stopColor="#7B1FA2" />
+          </linearGradient>
+        </defs>
+        <path className="vine-stem" d="M -40 140 C 90 20, 220 180, 360 40 C 480 -60, 600 160, 720 50" stroke="url(#vine-gradient-3)" strokeWidth="4.5" strokeLinecap="round" />
       </svg>
     </>
   );
@@ -153,11 +154,14 @@ function DeveloperVine() {
 function WebflowVine() {
   return (
     <>
-      <svg className="absolute pointer-events-none z-[0]" style={{ top: '-110%', left: '-40%', width: '200%', height: '320%', overflow: 'visible', filter: 'blur(1.5px)' }} viewBox="0 0 600 200" fill="none">
-        <path className="vine-stem opacity-0" d="M -100 100 C 0 -50, 200 -50, 300 100 C 400 250, 600 250, 700 100" stroke="url(#vine-gradient)" strokeWidth="1.5" strokeOpacity="0.35" strokeLinecap="round" />
-      </svg>
-      <svg className="absolute pointer-events-none z-[20]" style={{ top: '-110%', left: '-40%', width: '200%', height: '320%', overflow: 'visible', filter: 'drop-shadow(0px 15px 15px rgba(0,0,0,0.9))' }} viewBox="0 0 600 200" fill="none">
-        <path className="vine-stem opacity-0" d="M -100 100 C 0 250, 200 250, 300 100 C 400 -50, 600 -50, 700 100" stroke="url(#vine-gradient)" strokeWidth="4" strokeLinecap="round" />
+      <svg className="absolute pointer-events-none z-0" style={{ top: '-40%', left: '-15%', width: '140%', height: '180%', overflow: 'visible', opacity: 0.85 }} viewBox="0 0 600 200" fill="none">
+        <defs>
+          <linearGradient id="vine-gradient-4" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#66BB6A" />
+            <stop offset="100%" stopColor="#8E24AA" />
+          </linearGradient>
+        </defs>
+        <path className="vine-stem" d="M -50 60 C 60 180, 180 20, 300 160 C 420 280, 540 40, 640 140" stroke="url(#vine-gradient-4)" strokeWidth="4.5" strokeLinecap="round" />
       </svg>
     </>
   );

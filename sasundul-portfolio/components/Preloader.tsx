@@ -1,14 +1,9 @@
-import { useRef, useState, useEffect } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import { useEffect, useRef, useState } from 'react';
 import './Preloader.css';
 
-// ===================================================================================
-// PRELOADER SPEED & TIMING CONTROLS (Adjust these values to fine-tune preloader speed)
-// ===================================================================================
-// 1. COUNTER_DURATION: Total seconds for counter to count from 00 to 100.
-//    - Increase to slow down overall preloader (e.g. 5.0 = slow, 4.0 = medium, 2.5 = fast)
-const COUNTER_DURATION = 4.5;
+const COUNTER_DURATION = 2.0;
 
 // 2. IMAGE_STEP_FREQUENCY: How many number increments pass before switching images.
 //    - 1 = switch image on EVERY number (0, 1, 2, 3...) [Fastest]

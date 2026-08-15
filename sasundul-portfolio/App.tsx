@@ -3,7 +3,6 @@ import { ReactLenis } from 'lenis/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-import Preloader from './components/Preloader';
 import Navigation from './components/Navigation';
 import CustomCursor from './components/CustomCursor';
 import HeroID from './components/HeroID';
@@ -12,12 +11,13 @@ import HorizontalScroll from './components/HorizontalScroll';
 import ExpertiseSection from './components/ExpertiseSection';
 import WorkShowcase from './components/WorkShowcase';
 import Footer from './components/Footer';
-import ProjectModal from './components/ProjectModal';
-import ContactForm from './components/ContactForm';
-import CvModal from './components/CvModal';
 import SocialDock from './components/SocialDock';
 
-// Lazy-load chatbot — zero impact on initial page load
+// Lazy-load heavy overlays & preloader — zero impact on initial page bundle
+const Preloader = lazy(() => import('./components/Preloader'));
+const ProjectModal = lazy(() => import('./components/ProjectModal'));
+const ContactForm = lazy(() => import('./components/ContactForm'));
+const CvModal = lazy(() => import('./components/CvModal'));
 const AiChatbot = lazy(() => import('./components/AiChatbot'));
 
 gsap.registerPlugin(ScrollTrigger);
@@ -35,8 +35,6 @@ export interface Project {
 }
 
 // ========================= PROJECT DATA =========================
-// Insert your live website links and GitHub repository links below.
-// Leave liveUrl / githubUrl as null if the project is private or coming soon!
 export const PROJECTS: Project[] = [
   {
     id: 1,
@@ -45,8 +43,8 @@ export const PROJECTS: Project[] = [
     tech: "React • TypeScript • Spring Boot",
     image: "/FloodNav.png",
     year: "2025",
-    liveUrl: null, // e.g. "https://floodnav.com" or null for Coming Soon
-    githubUrl: null, // e.g. "https://github.com/Sasudul/FloodNav" or null for Private/Coming Soon
+    liveUrl: null,
+    githubUrl: null,
     description: "An AI-assisted disaster response routing system engineered to optimize emergency rescue navigation during flood events. Features real-time route mapping, hazard alerts, and multi-agency coordination."
   },
   {
@@ -163,18 +161,24 @@ export const PROJECTS: Project[] = [
 
 // ========================= APP =========================
 export default function App() {
-  const [showPreloader, setShowPreloader] = useState(false);
-  const [preloaderDone, setPreloaderDone] = useState(true);
+  const [showPreloader, setShowPreloader] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !sessionStorage.getItem('preloaderPlayed');
+    }
+    return true;
+  });
+
+  const [preloaderDone, setPreloaderDone] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !!sessionStorage.getItem('preloaderPlayed');
+    }
+    return false;
+  });
+
   const [navOpen, setNavOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [showContact, setShowContact] = useState(false);
-
-  // Check if preloader needs to play
-  useEffect(() => {
-    setShowPreloader(true);
-    setPreloaderDone(false);
-  }, []);
 
   // Theme persistence
   useEffect(() => {
@@ -195,7 +199,7 @@ export default function App() {
   const handlePreloaderComplete = () => {
     sessionStorage.setItem('preloaderPlayed', 'true');
     setPreloaderDone(true);
-    setTimeout(() => setShowPreloader(false), 100);
+    setTimeout(() => setShowPreloader(false), 50);
     ScrollTrigger.refresh();
   };
 
@@ -206,8 +210,12 @@ export default function App() {
 
   return (
     <ReactLenis root options={{ lerp: 0.08, smoothWheel: true }}>
-      {/* Preloader */}
-      {showPreloader && <Preloader onComplete={handlePreloaderComplete} />}
+      {/* Preloader - Only plays once per session */}
+      {showPreloader && (
+        <Suspense fallback={null}>
+          <Preloader onComplete={handlePreloaderComplete} />
+        </Suspense>
+      )}
 
       {/* Custom Cursor */}
       <CustomCursor />
@@ -239,15 +247,15 @@ export default function App() {
         </main>
       )}
 
-      {/* Overlays */}
-      {selectedProject && (
-        <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
-      )}
-      {showContact && (
-        <ContactForm onClose={() => setShowContact(false)} />
-      )}
-      <CvModal />
+      {/* Overlays Lazy Loaded */}
       <Suspense fallback={null}>
+        {selectedProject && (
+          <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} />
+        )}
+        {showContact && (
+          <ContactForm onClose={() => setShowContact(false)} />
+        )}
+        <CvModal />
         <AiChatbot />
       </Suspense>
     </ReactLenis>

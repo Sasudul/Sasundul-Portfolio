@@ -13,7 +13,7 @@ export interface ChatMessage {
   timestamp: number;
 }
 
-const API_KEY = (import.meta.env.VITE_GEMINI_API_KEY as string || '').trim();
+const API_KEY = (import.meta.env.GEMINI_API_KEY as string || '').trim();
 const PRIMARY_MODEL = 'gemini-2.0-flash';
 const FALLBACK_MODELS = ['gemini-1.5-flash', 'gemini-2.5-flash'];
 const MAX_INPUT_LENGTH = 500;
@@ -111,59 +111,64 @@ export async function* streamChat(
   conversation.addMessage('user', sanitized);
   rateLimiter.record();
 
-  // 1. TRY SECURE SERVERLESS API PROXY FIRST (/api/chat)
-  try {
-    const response = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: sanitized,
-        contents: conversation.getContentsForAPI(),
-      }),
-    });
+  // Detect if we're running on localhost (Vite dev) vs production (Vercel)
+  const isLocalDev = typeof window !== 'undefined' &&
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
-    const contentType = response.headers.get('content-type') || '';
+  // 1. TRY SECURE SERVERLESS API PROXY FIRST (/api/chat) — PRODUCTION ONLY
+  if (!isLocalDev) {
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: sanitized,
+          contents: conversation.getContentsForAPI(),
+        }),
+      });
 
-    if (response.ok && response.body && !contentType.includes('text/html')) {
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let fullResponse = '';
+      const contentType = response.headers.get('content-type') || '';
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        const textChunk = decoder.decode(value, { stream: true });
-        if (textChunk) {
-          fullResponse += textChunk;
-          yield textChunk;
+      if (response.ok && response.body && !contentType.includes('text/html')) {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let fullResponse = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const textChunk = decoder.decode(value, { stream: true });
+          if (textChunk) {
+            fullResponse += textChunk;
+            yield textChunk;
+          }
         }
-      }
 
-      if (fullResponse) {
-        conversation.addMessage('model', fullResponse);
-        return; // Success via serverless proxy!
-      }
-    } else if (!contentType.includes('text/html')) {
-      // Read exact server error text
-      const resText = await response.text();
-      let errMessage = '';
-      try {
-        const parsed = JSON.parse(resText);
-        errMessage = parsed.error || parsed.message || resText;
-      } catch {
-        errMessage = resText || `HTTP ${response.status}`;
-      }
+        if (fullResponse) {
+          conversation.addMessage('model', fullResponse);
+          return; // Success via serverless proxy!
+        }
+      } else if (!contentType.includes('text/html')) {
+        const resText = await response.text();
+        let errMessage = '';
+        try {
+          const parsed = JSON.parse(resText);
+          errMessage = parsed.error || parsed.message || resText;
+        } catch {
+          errMessage = resText || `HTTP ${response.status}`;
+        }
 
-      yield `Serverless Endpoint Error (${response.status}): ${errMessage}`;
-      return; // Do not fall through to client fallback
+        yield `Serverless Endpoint Error (${response.status}): ${errMessage}`;
+        return;
+      }
+    } catch (err: any) {
+      console.warn('[AI Service] /api/chat unavailable, falling back to client SDK:', err.message);
     }
-  } catch (err: any) {
-    console.warn('[AI Service] /api/chat fetch failed:', err);
   }
 
-  // 2. FALLBACK TO DIRECT CLIENT SDK (for local standalone Vite dev)
+  // 2. DIRECT CLIENT SDK (local dev, or serverless fallback)
   if (!API_KEY) {
-    yield "API Key not found. Please check VITE_GEMINI_API_KEY in your local .env or GEMINI_API_KEY in Vercel settings.";
+    yield "API Key not found. Add VITE_GEMINI_API_KEY to your .env file and restart the dev server.";
     return;
   }
 
@@ -174,6 +179,7 @@ export async function* streamChat(
 
     for (const modelName of modelsToTry) {
       try {
+        console.log(`[AI Service] Trying model: ${modelName}`);
         const stream = await client.models.generateContentStream({
           model: modelName,
           contents: conversation.getContentsForAPI(),
@@ -192,7 +198,9 @@ export async function* streamChat(
           }
         }
         if (fullResponse) break;
-      } catch {}
+      } catch (modelErr: any) {
+        console.warn(`[AI Service] Model ${modelName} failed:`, modelErr.message || modelErr);
+      }
     }
 
     if (fullResponse) {
@@ -203,7 +211,7 @@ export async function* streamChat(
     console.error('[AI Service Error]:', error);
   }
 
-  yield "Could not connect to AI. Please verify your GEMINI_API_KEY in Vercel settings and trigger a Redeploy.";
+  yield "Could not connect to AI. Check browser console for details. If on Vercel, verify GEMINI_API_KEY in environment variables.";
 }
 
 export function clearChatHistory(): void {
