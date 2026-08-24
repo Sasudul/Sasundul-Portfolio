@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sasundul Wanasinghe | Portfolio</title>
+    <title>Sasundul Wanasinghe | Designer & Full Stack Developer</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     
     <!-- Primary Meta Tags -->
-    <meta name="title" content="Sasundul Wanasinghe | Portfolio" />
-    <meta name="description" content="Sasundul Wanasinghe is a Full Stack Developer & Designer specializing in modern web applications, scalable backend systems, and intuitive user experiences." />
+    <meta name="title" content="Sasundul Wanasinghe | Designer & Full Stack Developer" />
+    <meta name="description" content="Sasundul Wanasinghe crafts impactful digital experiences through design and full-stack development. Specializing in React, Spring Boot, and modern web applications." />
     <meta name="keywords" content="Sasundul Wanasinghe, Sasundul, Sasa, Portfolio, Full Stack Developer, Frontend Developer, Backend Developer, React, Next.js, Spring Boot, Web Design, UI/UX" />
     <meta name="author" content="Sasundul Wanasinghe" />
     <link rel="canonical" href="https://sasundul.me/" />
@@ -16,24 +16,30 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://sasundul.me/" />
-    <meta property="og:title" content="Sasundul Wanasinghe | Portfolio" />
-    <meta property="og:description" content="Sasundul Wanasinghe is a Full Stack Developer & Designer specializing in modern web applications, scalable backend systems, and intuitive user experiences." />
+    <meta property="og:title" content="Sasundul Wanasinghe | Designer & Full Stack Developer" />
+    <meta property="og:description" content="Sasundul Wanasinghe crafts impactful digital experiences through design and full-stack development." />
     <meta property="og:image" content="https://sasundul.me/favicon.ico" />
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:url" content="https://sasundul.me/" />
-    <meta property="twitter:title" content="Sasundul Wanasinghe | Portfolio" />
-    <meta property="twitter:description" content="Sasundul Wanasinghe is a Full Stack Developer & Designer specializing in modern web applications, scalable backend systems, and intuitive user experiences." />
+    <meta property="twitter:title" content="Sasundul Wanasinghe | Designer & Full Stack Developer" />
+    <meta property="twitter:description" content="Sasundul Wanasinghe crafts impactful digital experiences through design and full-stack development." />
     <meta property="twitter:image" content="https://sasundul.me/favicon.ico" />
 
-    <!-- Fonts and CSS -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fragment+Mono:wght@400&family=Inter:wght@300;400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/index.css">
+
+    <!-- Prevent FOUC for preloader -->
+    <style>
+      [data-preloader-hidden] { visibility: hidden; }
+      .preloader { position: fixed; inset: 0; z-index: 99999; }
+    </style>
   </head>
-  <body class="bg-[#050505] text-[#f1f1f1] antialiased">
+  <body>
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

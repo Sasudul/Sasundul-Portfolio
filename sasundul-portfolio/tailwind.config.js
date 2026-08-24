@@ -2,23 +2,19 @@
 export default {
   content: [
     "./index.html",
-    "./**/*.{js,ts,jsx,tsx}",
+    "./*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Oswald', 'sans-serif'],
+        mono: ['"Fragment Mono"', 'monospace'],
       },
       colors: {
-        wa: {
-          green: '#25D366',       // Bright Green
-          teal: '#128C7E',        // Teal
-          dark: '#0B141A',        // Dark Mode BG
-          card: '#202C33',        // Dark Card
-          light: '#FFFFFF',       // Mode BG
-          gray: '#8696A0',        // Gray Text
-        }
+        accent: 'var(--accent)',
+        muted: 'var(--muted)',
       },
     },
   },
