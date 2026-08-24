@@ -8,7 +8,8 @@
   width: 100vw;
   height: 100vh;
   z-index: 99999;
-  pointer-events: auto; /* Block interactions while loading */
+  pointer-events: auto;
+  /* Block interactions while loading */
 }
 
 .preloader-half {
@@ -53,13 +54,6 @@
   justify-content: center;
 }
 
-@media (max-width: 768px) {
-  .preloader-images {
-    width: 320px;
-    height: 200px;
-  }
-}
-
 .preloader-img {
   position: absolute;
   top: 0;
@@ -92,15 +86,23 @@
   transform: translate(-50%, -50%);
   display: flex;
   font-family: 'Bebas Neue', 'Impact', sans-serif;
-  font-size: 10vw;
+  font-size: 9.5vw;
   color: #ffffff;
   white-space: nowrap;
   letter-spacing: 0.05em;
 }
 
 @media (max-width: 768px) {
+  .preloader-images {
+    width: 85vw;
+    max-width: 320px;
+    height: 52vw;
+    max-height: 200px;
+  }
+
   .preloader-name-container {
-    font-size: 15vw;
+    font-size: 8.4vw;
+    letter-spacing: 0.02em;
   }
 }
 
@@ -113,7 +115,8 @@
 
 .preloader-char {
   display: inline-block;
-  transform: translateY(110%); /* Start hidden */
+  transform: translateY(110%);
+  /* Start hidden */
   will-change: transform;
 }
 

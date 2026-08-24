@@ -35,8 +35,11 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
   const [isComplete, setIsComplete] = useState(false);
   const [isBuffering, setIsBuffering] = useState(true);
 
-  // Preload all project & hero images during 2-second black screen buffer
+  // Preload all project & hero images during a guaranteed 1.5-second black screen buffer
   useEffect(() => {
+    let isMounted = true;
+
+    // Fire-and-forget image pre-fetching into browser cache
     const ALL_PRELOAD_IMAGES = [
       ...IMAGES,
       '/image.png',
@@ -48,31 +51,21 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
       '/shapes/shape6.png',
     ];
 
-    let isMounted = true;
-
-    const loadPromises = ALL_PRELOAD_IMAGES.map(src => {
-      return new Promise(resolve => {
-        const img = new Image();
-        img.src = src;
-        if (img.complete) {
-          resolve(true);
-        } else {
-          img.onload = () => resolve(true);
-          img.onerror = () => resolve(true);
-        }
-      });
+    ALL_PRELOAD_IMAGES.forEach(src => {
+      const img = new Image();
+      img.src = src;
     });
 
-    const bufferTimer = new Promise(resolve => setTimeout(resolve, 2000));
-
-    Promise.all([...loadPromises, bufferTimer]).then(() => {
+    // Guaranteed 1.5-second timer — never hangs on mobile devices
+    const timer = setTimeout(() => {
       if (isMounted) {
         setIsBuffering(false);
       }
-    });
+    }, 1500);
 
     return () => {
       isMounted = false;
+      clearTimeout(timer);
     };
   }, []);
 
@@ -119,6 +112,8 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
 
     const topCounter = wrapperRef.current.querySelector('.preloader-counter-top');
     const bottomCounter = wrapperRef.current.querySelector('.preloader-counter-bottom');
+    const topImg = wrapperRef.current.querySelector('.preloader-images-top .preloader-img') as HTMLImageElement;
+    const bottomImg = wrapperRef.current.querySelector('.preloader-images-bottom .preloader-img') as HTMLImageElement;
 
     // Counter Object: 0 to 100
     const counterObj = { val: 0 };
@@ -145,6 +140,8 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
           if (nextImgIdx !== activeImgRef.current) {
             activeImgRef.current = nextImgIdx;
             const newSrc = IMAGES[nextImgIdx];
+            if (topImg) topImg.src = newSrc;
+            if (bottomImg) bottomImg.src = newSrc;
             if (topImgRef.current) topImgRef.current.src = newSrc;
             if (bottomImgRef.current) bottomImgRef.current.src = newSrc;
           }
