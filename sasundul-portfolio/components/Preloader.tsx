@@ -3,15 +3,16 @@ import gsap from 'gsap';
 import { useEffect, useRef, useState } from 'react';
 import './Preloader.css';
 
-const COUNTER_DURATION = 2.0;
+const COUNTER_DURATION = 3.0;
 
 // 2. IMAGE_STEP_FREQUENCY: How many number increments pass before switching images.
 //    - 1 = switch image on EVERY number (0, 1, 2, 3...) [Fastest]
 //    - 3 = switch image every 3 numbers (0, 3, 6, 9...) [Medium]
 //    - 5 = switch image every 5 numbers (0, 5, 10, 15...) [Paced]
-const IMAGE_STEP_FREQUENCY = 3;
+const IMAGE_STEP_FREQUENCY = 4;
 
 const IMAGES = [
+  '/Art-Gallery-01.jpeg',
   '/Zerin.png',
   '/Vap-Construction.png',
   '/FloodNav.png',
@@ -22,7 +23,6 @@ const IMAGES = [
   '/Pizza-Mania.png',
   '/NatoMiniMart.png',
   '/Lumina.png',
-  '/Art-Gallery-01.jpeg',
 ];
 
 const NAME = "CODE BY SASUNDUL®";
@@ -33,13 +33,47 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
   const bottomImgRef = useRef<HTMLImageElement>(null);
   const activeImgRef = useRef(0);
   const [isComplete, setIsComplete] = useState(false);
+  const [isBuffering, setIsBuffering] = useState(true);
 
-  // Preload all images immediately into browser cache
+  // Preload all project & hero images during 2-second black screen buffer
   useEffect(() => {
-    IMAGES.forEach(src => {
-      const img = new Image();
-      img.src = src;
+    const ALL_PRELOAD_IMAGES = [
+      ...IMAGES,
+      '/image.png',
+      '/shapes/shape1.png',
+      '/shapes/shape2.png',
+      '/shapes/Shape3.png',
+      '/shapes/shape4.png',
+      '/shapes/shape5.png',
+      '/shapes/shape6.png',
+    ];
+
+    let isMounted = true;
+
+    const loadPromises = ALL_PRELOAD_IMAGES.map(src => {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.src = src;
+        if (img.complete) {
+          resolve(true);
+        } else {
+          img.onload = () => resolve(true);
+          img.onerror = () => resolve(true);
+        }
+      });
     });
+
+    const bufferTimer = new Promise(resolve => setTimeout(resolve, 2000));
+
+    Promise.all([...loadPromises, bufferTimer]).then(() => {
+      if (isMounted) {
+        setIsBuffering(false);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Render identical top/bottom content for gateway clip-path split
@@ -47,11 +81,11 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
     <div className="preloader-content">
       {/* Images Container */}
       <div className={`preloader-images preloader-images-${isTop ? 'top' : 'bottom'}`}>
-        <img 
-          ref={isTop ? topImgRef : bottomImgRef} 
-          src={IMAGES[0]} 
-          className="preloader-img" 
-          alt="" 
+        <img
+          ref={isTop ? topImgRef : bottomImgRef}
+          src={IMAGES[0]}
+          className="preloader-img"
+          alt=""
         />
       </div>
 
@@ -74,7 +108,7 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
   );
 
   useGSAP(() => {
-    if (!wrapperRef.current) return;
+    if (isBuffering || !wrapperRef.current) return;
 
     const tl = gsap.timeline({
       onComplete: () => {
@@ -98,7 +132,7 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
         const currentVal = Math.floor(counterObj.val);
         if (currentVal !== lastVal) {
           lastVal = currentVal;
-          
+
           // Update Counter Text (00 to 100)
           const formattedVal = currentVal < 10 ? `0${currentVal}` : currentVal.toString();
           if (topCounter) topCounter.innerHTML = formattedVal;
@@ -165,12 +199,19 @@ export default function Preloader({ onComplete }: { onComplete: () => void }) {
       ease: "expo.inOut"
     }, "<");
 
-  }, { scope: wrapperRef });
+  }, { scope: wrapperRef, dependencies: [isBuffering] });
 
   if (isComplete) return null;
 
   return (
     <div ref={wrapperRef} className="preloader-wrapper">
+      {/* 2-Second Pitch-Black Image Preloading Buffer */}
+      {isBuffering && (
+        <div className="fixed inset-0 bg-[#000000] z-[999999] flex flex-col items-center justify-center transition-opacity duration-300">
+          <div className="w-1.5 h-1.5 rounded-full bg-white/40 animate-ping" />
+        </div>
+      )}
+
       {/* Top Half Slice */}
       <div className="preloader-half preloader-top">
         {renderContent(true)}

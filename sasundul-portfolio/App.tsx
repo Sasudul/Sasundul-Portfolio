@@ -161,19 +161,8 @@ export const PROJECTS: Project[] = [
 
 // ========================= APP =========================
 export default function App() {
-  const [showPreloader, setShowPreloader] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return !sessionStorage.getItem('preloaderPlayed');
-    }
-    return true;
-  });
-
-  const [preloaderDone, setPreloaderDone] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return !!sessionStorage.getItem('preloaderPlayed');
-    }
-    return false;
-  });
+  const [showPreloader, setShowPreloader] = useState(true);
+  const [preloaderDone, setPreloaderDone] = useState(false);
 
   const [navOpen, setNavOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');

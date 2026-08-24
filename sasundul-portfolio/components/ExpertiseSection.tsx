@@ -3,7 +3,7 @@ import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowUpRight } from 'lucide-react';
-import PixelBlast from './PixelBlast';
+import Galaxy from './Galaxy';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -141,21 +141,20 @@ export default function ExpertiseSection() {
       id="expertise"
       className="relative min-h-screen h-screen flex flex-col justify-between py-8 px-6 md:px-16 bg-[#050505] text-white overflow-hidden"
     >
-      {/* Background Ambient Pixel Blast */}
-      <PixelBlast
-        variant="circle"
-        color="#707070"
-        pixelSize={3}
-        patternDensity={1.2}
-        patternScale={2.0}
-        liquid={true}
-        liquidStrength={0.08}
-        liquidRadius={1.0}
-        enableRipples={true}
-        rippleIntensityScale={1.2}
-        rippleThickness={0.1}
-        rippleSpeed={0.3}
-        opacity={0.25}
+      {/* Background Ambient Galaxy */}
+      <Galaxy 
+        mouseRepulsion
+        mouseInteraction
+        density={1}
+        glowIntensity={0.3}
+        saturation={0}
+        hueShift={140}
+        twinkleIntensity={0.3}
+        rotationSpeed={0.1}
+        repulsionStrength={2}
+        autoCenterRepulsion={0}
+        starSpeed={0.5}
+        speed={1}
       />
 
       <div className="max-w-7xl mx-auto w-full relative z-10 flex flex-col justify-between h-full py-4">
